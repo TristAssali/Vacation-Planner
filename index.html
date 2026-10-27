@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacation Planner</title>
+</head>
+    
+    <body>
+
+        <h1>Vacation Planner</h1>
+
+        <h2>Créer un voyage</h2>
+
+        <form id="trip-form">
+            <label for="trip-name">Nom du voyage</label>
+            <input type="text" id="trip-name" required>
+            <label for="destination">Destination</label>
+            <input type="text" id="destination" required>
+            <label for="departure-date">Date de départ</label>
+            <input type="date" id="departure-date">
+
+            <label for="return-date">Date de retour</label>
+            <input type="date" id="return-date">
+
+            <button type="submit">Créer le voyage</button>
+        </form>
+
+        <section id="trip-display">
+        <h2>Mon voyage</h2>
+        <p id="display-name"></p>
+        <p id="display-destination"></p>
+        <p id="display-departure"></p>
+        <p id="display-return"></p>
+        </section>
+        
+        <section>
+        <h2>Activités</h2>
+        <!-- Formulaire pour ajouter une activité -->
+        <form id="activity-form">
+            <label for="activity-name">Nom de l’activité</label>
+            <input type="text" id="activity-name" required>
+            <button type="submit">Ajouter</button>
+        </form>
+        <!-- Les activités seront affichées dans cette liste -->
+        <ul id="activity-list"></ul>
+        </section>
+
+    </body>
+    <script src="js/script.js"></script>
+
+</html>
