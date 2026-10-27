@@ -7,10 +7,20 @@ const activityList = document.getElementById("activity-list");
 
 tripForm.addEventListener("submit", function (event) {
     event.preventDefault();
-    const tripName = document.getElementById("trip-name").value;
-    const destination = document.getElementById("destination").value;
+    const tripName = document.getElementById("trip-name").value.trim();
+    const destination = document.getElementById("destination").value.trim();
+    // Vérifie que les deux champs contiennent du texte
+    if (!tripName || !destination) {
+        alert("Entre un nom de voyage et une destination.");
+        return;
+    }
     const departureDate = document.getElementById("departure-date").value;
     const returnDate = document.getElementById("return-date").value;
+    // Vérifie que le retour ne précède pas le départ
+    if (departureDate && returnDate && returnDate < departureDate) {
+        alert("La date de retour doit être après la date de départ.");
+        return;
+    }
     const trip = {
         name: tripName,
         destination: destination,
@@ -37,8 +47,9 @@ tripForm.addEventListener("submit", function (event) {
 
 // Affiche les informations d'un voyage sur la page
 function displayTrip(trip) {
-    document.getElementById("display-name").textContent = trip.name;
-    document.getElementById("display-destination").textContent = trip.destination;
+    document.getElementById("display-name").textContent = "Voyage : " + trip.name;
+    document.getElementById("display-destination").textContent =
+        "Destination : " + trip.destination;
 
     document.getElementById("display-departure").textContent =
         "Départ : " + (trip.departureDate || "Non précisée");
@@ -76,9 +87,21 @@ activityForm.addEventListener("submit", function (event) {
         trip.activities = [];
     }
 
-    const activityName = document.getElementById("activity-name").value;
-    // Ajoute l'activité au voyage et sauvegarde la nouvelle version
-    trip.activities.push(activityName);
+    const activityName = document.getElementById("activity-name").value.trim();
+    // Empêche l'ajout d'une activité vide
+    if (!activityName) {
+        alert("Entre un nom pour l'activité.");
+        return;
+    }    
+    const activityLocation = document.getElementById("activity-location").value.trim();
+    // Regroupe les informations de l'activité
+    const activity = {
+        name: activityName,
+        location: activityLocation
+    };
+    // Ajoute l'objet au voyage
+    trip.activities.push(activity);
+
     localStorage.setItem("trip", JSON.stringify(trip));
     
     // Réaffiche toutes les activités avec leur bouton Supprimer
@@ -95,11 +118,14 @@ function displayActivities(trip) {
 
     for (const [index, activity] of (trip.activities || []).entries()) {
         const listItem = document.createElement("li");
-        listItem.textContent = activity + " ";
+        const name = typeof activity === "string" ? activity : activity.name;
+        const location = typeof activity === "string" ? "" : activity.location;
+        listItem.textContent = location ? name + " — " + location : name;
 
         // Crée un bouton pour supprimer cette activité
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Supprimer";
+        deleteButton.classList.add("delete-button");
         deleteButton.type = "button";
 
         deleteButton.addEventListener("click", function () {

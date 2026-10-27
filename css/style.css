@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fa;
+    color: #222;
+}
+/* Limite la largeur du contenu et le centre */
+body > * {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Présente les sections et le formulaire du voyage comme des cartes */
+section,
+#trip-form {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+}
+/* Place les étiquettes et les champs sur des lignes séparées */
+label,
+input {
+    display: block;
+}
+/* Donne de l'espace autour des champs */
+input {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font: inherit;
+}
+
+/* Style commun à tous les boutons */
+button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+}
+/* Assombrit le bouton quand la souris passe dessus */
+button:hover {
+    background-color: #1d4ed8;
+}
+
+.delete-button {
+    background-color: #dc2626;
+}
+.delete-button:hover {
+    background-color: #b91c1c;
+}
+
+#activity-list {
+    list-style: none;
+    padding: 0;
+}
+/* Aligne le nom et le bouton de chaque activité */
+#activity-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
