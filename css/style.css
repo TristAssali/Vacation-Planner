@@ -73,3 +73,34 @@ button:hover {
     padding: 10px 0;
     border-bottom: 1px solid #e5e7eb;
 }
+
+.overview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+/* Évite que les cartes débordent de leur colonne */
+.overview-card {
+    min-width: 0;
+    margin-bottom: 0;
+}
+/* Sur un petit écran, affiche une carte par ligne */
+@media (max-width: 700px) {
+    .overview {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Donne plus d'espace à l'itinéraire qu'aux membres */
+.overview-details {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+/* Empile les cartes sur un petit écran */
+@media (max-width: 700px) {
+    .overview-details {
+        grid-template-columns: 1fr;
+    }
+}
