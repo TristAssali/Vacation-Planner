@@ -44,20 +44,33 @@
                     <!-- Seul le formulaire apparaît dans la fenêtre -->
                     <dialog id="lodging-dialog">
                         <h2>Hébergement</h2>
+                        <p class="dialog-description">Ajoute le logement prévu pour ton voyage.</p>
 
-                        <form id="lodging-form">
+                        <!-- La validation sera gérée en JavaScript -->
+                        <form id="lodging-form" novalidate>
                             <label for="lodging-name">Nom du logement</label>
-                            <input type="text" id="lodging-name" required>
+                            <input
+                                type="text"
+                                id="lodging-name"
+                                required
+                                aria-describedby="lodging-name-error"
+                            >
+                            <p id="lodging-name-error" class="field-error" hidden></p>
 
                             <label for="lodging-address">Adresse</label>
-                            <input type="text" id="lodging-address" required>
+                            <input
+                                type="text"
+                                id="lodging-address"
+                                required
+                                aria-describedby="lodging-address-error"
+                            >
+                            <p id="lodging-address-error" class="field-error" hidden></p>
 
-                            <button type="submit">Enregistrer</button>
+                            <div class="dialog-actions">
+                                <button type="button" id="close-lodging-button">Annuler</button>
+                                <button type="submit">Enregistrer</button>
+                            </div>
                         </form>
-
-                        <button type="button" id="close-lodging-button">
-                            Annuler
-                        </button>
                     </dialog>
                 </section>
                 <section class="overview-card">

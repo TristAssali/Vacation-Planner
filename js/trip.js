@@ -169,9 +169,29 @@ lodgingForm.addEventListener("submit", function (event) {
     const name = document.getElementById("lodging-name").value.trim();
     const address = document.getElementById("lodging-address").value.trim();
 
-    // Refuse les champs contenant seulement des espaces
+    // Affiche une erreur pour chaque champ vide
+    const nameInput = document.getElementById("lodging-name");
+    const addressInput = document.getElementById("lodging-address");
+    const nameError = document.getElementById("lodging-name-error");
+    const addressError = document.getElementById("lodging-address-error");
+
+    nameInput.setAttribute("aria-invalid", String(!name));
+    addressInput.setAttribute("aria-invalid", String(!address));
+
+    nameError.textContent = name ? "" : "Entre le nom du logement.";
+    addressError.textContent = address ? "" : "Entre l'adresse du logement.";
+
+    nameError.hidden = Boolean(name);
+    addressError.hidden = Boolean(address);
+
+    // Arrête l'enregistrement et sélectionne le premier champ invalide
     if (!name || !address) {
-        alert("Entre le nom et l'adresse du logement.");
+        if (!name) {
+            nameInput.focus();
+        } else {
+            addressInput.focus();
+        }
+
         return;
     }
 
@@ -214,6 +234,15 @@ editLodgingButton.addEventListener("click", function () {
     document.getElementById("lodging-address").value =
         trip?.lodging?.address || "";
 
+    // Réinitialise les erreurs à chaque ouverture de la fenêtre
+    for (const fieldId of ["lodging-name", "lodging-address"]) {
+        document.getElementById(fieldId).removeAttribute("aria-invalid");
+
+        const error = document.getElementById(fieldId + "-error");
+        error.hidden = true;
+        error.textContent = "";
+    }
+
     lodgingDialog.showModal();
 });
 
@@ -221,3 +250,17 @@ editLodgingButton.addEventListener("click", function () {
 closeLodgingButton.addEventListener("click", function () {
     lodgingDialog.close();
 });
+
+// Retire l'erreur dès que le champ contient du texte
+for (const fieldId of ["lodging-name", "lodging-address"]) {
+    const input = document.getElementById(fieldId);
+    const error = document.getElementById(fieldId + "-error");
+
+    input.addEventListener("input", function () {
+        if (input.value.trim()) {
+            input.removeAttribute("aria-invalid");
+            error.hidden = true;
+            error.textContent = "";
+        }
+    });
+}
