@@ -75,3 +75,15 @@ export function displayActivityMarkers() {
             .addTo(activityMarkers);
     }
 }
+
+// Centre la carte sur une activité enregistrée
+export function focusActivityOnMap(coordinates) {
+    if (!activitiesMap || !coordinates) {
+        return;
+    }
+
+    activitiesMap.setView(
+        [coordinates.lat, coordinates.lng],
+        16 //niveau zoom
+    );
+}

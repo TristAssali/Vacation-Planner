@@ -2,7 +2,8 @@ import { getSavedTrip, saveTrip } from "./storage.js";
 import {
     clearSelectedLocationMarker,
     displayActivityMarkers,
-    getSelectedLocationCoordinates
+    getSelectedLocationCoordinates,
+    focusActivityOnMap
 } from "./map.js";
 
 const activityForm = document.getElementById("activity-form");
@@ -78,6 +79,19 @@ function displayActivities(trip) {
             displayActivities(currentTrip);
             displayActivityMarkers();
         });
+
+        // Propose le centrage seulement si l'activité possède un emplacement
+        if (typeof activity !== "string" && activity.coordinates) {
+            const mapButton = document.createElement("button");
+            mapButton.type = "button";
+            mapButton.textContent = "Voir sur la carte";
+
+            mapButton.addEventListener("click", function () {
+                focusActivityOnMap(activity.coordinates);
+            });
+
+            listItem.appendChild(mapButton);
+        }
 
         listItem.appendChild(deleteButton);
         activityList.appendChild(listItem);
