@@ -1,3 +1,7 @@
+let activitiesMap = null;
+let selectedLocationMarker = null;
+let activityMarkers = null;
+
 const savedTrip = localStorage.getItem("trip");
 const activityForm = document.getElementById("activity-form");
 const activityList = document.getElementById("activity-list");
@@ -32,6 +36,8 @@ if (savedTrip) {
     }
     document.getElementById("trip-dates").textContent = datesText;
     displayActivityOverview(trip);
+
+    displayActivityMarkers();
 }
 
 // Réagit à l'ajout d'une activité
@@ -59,10 +65,18 @@ activityForm.addEventListener("submit", function (event) {
         return;
     }    
     const activityLocation = document.getElementById("activity-location").value.trim();
-    // Regroupe les informations de l'activité
+    // Récupère le point sélectionné, s'il existe
+    const coordinates = selectedLocationMarker
+        ? selectedLocationMarker.getLatLng()
+        : null;
+
+    // Enregistre le nom, l'emplacement écrit et les coordonnées
     const activity = {
         name: activityName,
-        location: activityLocation
+        location: activityLocation,
+        coordinates: coordinates
+            ? { lat: coordinates.lat, lng: coordinates.lng }
+            : null
     };
     // Ajoute l'objet au voyage
     trip.activities.push(activity);
@@ -71,9 +85,17 @@ activityForm.addEventListener("submit", function (event) {
     
     // Réaffiche toutes les activités avec leur bouton Supprimer
     displayActivities(trip);
+    // Affiche les marqueurs des activités enregistrées
+    displayActivityMarkers();
     
     // Vide le formulaire pour faciliter l'ajout suivant
     activityForm.reset();
+
+    // Efface la sélection pour préparer l'activité suivante
+    if (selectedLocationMarker) {
+        activitiesMap.removeLayer(selectedLocationMarker);
+        selectedLocationMarker = null;
+    }
 });
 
 // Affiche toutes les activités d'un voyage
@@ -104,6 +126,8 @@ function displayActivities(trip) {
             localStorage.setItem("trip", JSON.stringify(currentTrip));
             // Actualise les listes d'activités
             displayActivities(currentTrip);
+            // Retire aussi de la carte le marqueur de l'activité supprimée
+            displayActivityMarkers();
         });
 
         listItem.appendChild(deleteButton);
@@ -152,6 +176,7 @@ ideasButton.addEventListener("click", function () {
     // Met en évidence l'onglet Idées et carte
     ideasButton.classList.add("active");
     overviewButton.classList.remove("active");
+    requestAnimationFrame(showActivitiesMap);
 });
 
 // Retourne à la page de création sans effacer le voyage
@@ -263,4 +288,73 @@ for (const fieldId of ["lodging-name", "lodging-address"]) {
             error.textContent = "";
         }
     });
+}
+
+// Conserve la carte pour ne la créer qu'une seule fois
+function showActivitiesMap() {
+    if (!activitiesMap) {
+        // Centre temporairement la carte sur New York
+        activitiesMap = L.map("activities-map").setView(
+            [40.7128, -74.0060],
+            12
+        );
+
+        // Ajoute le fond de carte et les crédits OpenStreetMap
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(activitiesMap);
+
+        // Sélectionne un emplacement lorsque l'utilisateur clique sur la carte
+        activitiesMap.on("click", function (event) {
+            const coordinates = event.latlng;
+
+            // Déplace le marqueur existant ou en crée un nouveau
+            if (selectedLocationMarker) {
+                selectedLocationMarker.setLatLng(coordinates);
+            } else {
+                selectedLocationMarker = L.marker(coordinates).addTo(activitiesMap);
+            }
+        });
+    }
+
+    // Ajuste la carte à l'espace disponible après l'affichage de l'onglet
+    activitiesMap.invalidateSize();
+
+    displayActivityMarkers();
+}
+
+// Met à jour les marqueurs à partir du voyage sauvegardé
+function displayActivityMarkers() {
+    // Attend que la carte soit créée
+    if (!activitiesMap) {
+        return;
+    }
+
+    if (!activityMarkers) {
+        activityMarkers = L.layerGroup().addTo(activitiesMap);
+    }
+
+    // Retire les anciens marqueurs pour éviter les doublons
+    activityMarkers.clearLayers();
+
+    const trip = JSON.parse(localStorage.getItem("trip"));
+
+    for (const activity of trip?.activities || []) {
+        if (!activity.coordinates) {
+            continue;
+        }
+
+        // Utilise du texte pour afficher le nom sans interpréter du HTML
+        const popupContent = document.createElement("span");
+        popupContent.textContent = activity.name;
+
+        L.marker([
+            activity.coordinates.lat,
+            activity.coordinates.lng
+        ])
+            .bindPopup(popupContent)
+            .addTo(activityMarkers);
+    }
 }

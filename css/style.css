@@ -225,3 +225,25 @@ nav[aria-label="Sections du voyage"] {
 #trip-form input[aria-invalid="true"]:focus {
     outline: 3px solid #fee2e2;
 }
+
+#activities-map {
+    height: 400px;
+    width: 100%;
+    margin-top: 16px;
+    border-radius: 12px;
+    background-color: #e2e8f0;
+}
+
+.ideas-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* Empile les activités et la carte sur un petit écran */
+@media (max-width: 800px) {
+    .ideas-layout {
+        grid-template-columns: 1fr;
+    }
+}
