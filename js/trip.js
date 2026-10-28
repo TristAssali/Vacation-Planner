@@ -6,6 +6,15 @@ const activityList = document.getElementById("activity-list");
 if (savedTrip) {
     // Transforme le texte JSON en objet JavaScript
     const trip = JSON.parse(savedTrip);
+    // Affiche le logement s'il a déjà été enregistré
+    if (trip.lodging) {
+        document.getElementById("lodging-display").textContent =
+            trip.lodging.name + " — " + trip.lodging.address;
+
+        // Préremplit les champs pour faciliter les modifications
+        document.getElementById("lodging-name").value = trip.lodging.name;
+        document.getElementById("lodging-address").value = trip.lodging.address;
+    }
     displayActivities(trip);
 
     // Affiche les informations du voyage sur la page
@@ -85,17 +94,22 @@ function displayActivities(trip) {
         deleteButton.type = "button";
 
         deleteButton.addEventListener("click", function () {
-            // Retire l'activité du tableau et sauvegarde le voyage
-            trip.activities.splice(index, 1);
-            localStorage.setItem("trip", JSON.stringify(trip));
+            const currentTrip = JSON.parse(localStorage.getItem("trip"));
 
-            // Actualise la liste affichée
-            displayActivities(trip);
+            if (!currentTrip) {
+                return;
+            }
+            // Supprime l'activité et sauvegarde le voyage à jour
+            currentTrip.activities.splice(index, 1);
+            localStorage.setItem("trip", JSON.stringify(currentTrip));
+            // Actualise les listes d'activités
+            displayActivities(currentTrip);
         });
 
         listItem.appendChild(deleteButton);
         activityList.appendChild(listItem);
     }
+    displayActivityOverview(trip);
 }
 
 // Affiche les activités dans l'aperçu de la vue d'ensemble
@@ -115,3 +129,95 @@ function displayActivityOverview(trip) {
         overviewList.appendChild(listItem);
     }
 }
+
+// Récupère les boutons et leurs sections
+const overviewButton = document.getElementById("overview-button");
+const ideasButton = document.getElementById("ideas-button");
+const overviewPanel = document.getElementById("overview-panel");
+const ideasPanel = document.getElementById("ideas-panel");
+
+// Affiche la vue d'ensemble et cache les idées
+overviewButton.addEventListener("click", function () {
+    overviewPanel.hidden = false;
+    ideasPanel.hidden = true;
+    // Met en évidence l'onglet Vue d'ensemble
+    overviewButton.classList.add("active");
+    ideasButton.classList.remove("active");
+});
+
+// Affiche les idées et cache la vue d'ensemble
+ideasButton.addEventListener("click", function () {
+    overviewPanel.hidden = true;
+    ideasPanel.hidden = false;
+    // Met en évidence l'onglet Idées et carte
+    ideasButton.classList.add("active");
+    overviewButton.classList.remove("active");
+});
+
+// Retourne à la page de création sans effacer le voyage
+document.getElementById("back-button").addEventListener("click", function () {
+    window.location.href = "index.html";
+});
+
+// Récupère le formulaire d'hébergement
+const lodgingForm = document.getElementById("lodging-form");
+
+lodgingForm.addEventListener("submit", function (event) {
+    // Empêche le rechargement de la page
+    event.preventDefault();
+
+    const name = document.getElementById("lodging-name").value.trim();
+    const address = document.getElementById("lodging-address").value.trim();
+
+    // Refuse les champs contenant seulement des espaces
+    if (!name || !address) {
+        alert("Entre le nom et l'adresse du logement.");
+        return;
+    }
+
+    // Récupère la version actuelle du voyage pour conserver ses activités
+    const savedTrip = localStorage.getItem("trip");
+
+    if (!savedTrip) {
+        alert("Crée d'abord un voyage.");
+        return;
+    }
+
+    const trip = JSON.parse(savedTrip);
+
+    // Ajoute ou remplace le logement dans le voyage
+    trip.lodging = {
+        name: name,
+        address: address
+    };
+
+    localStorage.setItem("trip", JSON.stringify(trip));
+
+    // Affiche le logement enregistré
+    document.getElementById("lodging-display").textContent =
+        name + " — " + address;
+    lodgingDialog.close();
+});
+
+// Récupère la fenêtre et ses boutons
+const lodgingDialog = document.getElementById("lodging-dialog");
+const editLodgingButton = document.getElementById("edit-lodging-button");
+const closeLodgingButton = document.getElementById("close-lodging-button");
+
+// Ouvre le formulaire avec les informations enregistrées
+editLodgingButton.addEventListener("click", function () {
+    const trip = JSON.parse(localStorage.getItem("trip"));
+
+    // Réinitialise les champs pour abandonner les modifications non enregistrées
+    document.getElementById("lodging-name").value =
+        trip?.lodging?.name || "";
+    document.getElementById("lodging-address").value =
+        trip?.lodging?.address || "";
+
+    lodgingDialog.showModal();
+});
+
+// Ferme la fenêtre sans enregistrer
+closeLodgingButton.addEventListener("click", function () {
+    lodgingDialog.close();
+});

@@ -104,3 +104,54 @@ button:hover {
         grid-template-columns: 1fr;
     }
 }
+
+.tab-button {
+    background-color: transparent;
+    color: #334155;
+}
+.tab-button:hover {
+    background-color: #e2e8f0;
+}
+/* Met en évidence l'onglet sélectionné */
+.tab-button.active {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* Espace les onglets et permet leur retour à la ligne sur mobile */
+nav[aria-label="Sections du voyage"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+/* Distingue les onglets qui ne sont pas encore disponibles */
+.tab-button:disabled {
+    color: #94a3b8;
+    background-color: transparent;
+    cursor: not-allowed;
+}
+/* Donne plus de largeur à la page du voyage */
+.trip-page > header,
+.trip-page > main {
+    max-width: 1200px;
+}
+/* Met en valeur les informations principales du voyage */
+.trip-banner {
+    background: linear-gradient(120deg, #dbeafe, #eff6ff);
+    padding: 32px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+}
+.trip-banner h2 {
+    margin: 0 0 16px;
+    font-size: 2rem;
+}
+.trip-banner p {
+    margin: 8px 0;
+    color: #475569;
+}
+
+#back-button {
+    margin-bottom: 20px;
+}

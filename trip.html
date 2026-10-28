@@ -8,53 +8,83 @@
     <!-- Relie la page à la feuille de style -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="trip-page">
     <header>
         <h1>Vacation Planner</h1>
+        <!-- Retourne à la page de création -->
+        <button type="button" id="back-button">← Retour</button>
     </header>
 
     <main>
-        <h2 id="trip-title">Mon voyage</h2>
-        <p id="trip-destination"></p>
-        <p id="trip-dates"></p>
+        <div class="trip-banner">
+            <h2 id="trip-title">Mon voyage</h2>
+            <p id="trip-destination"></p>
+            <p id="trip-dates"></p>
+        </div>
 
         <nav aria-label="Sections du voyage">
-            <button type="button">Vue d’ensemble</button>
-            <button type="button">Idées et carte</button>
-            <button type="button">Itinéraire</button>
-            <button type="button">Membres</button>
+            <button type="button" id="overview-button" class="tab-button active">Vue d’ensemble</button>
+            <button type="button" id="ideas-button" class="tab-button">Idées et carte</button>
+            <button type="button" class="tab-button" disabled>Itinéraire</button>
+            <button type="button" class="tab-button" disabled>Membres</button>
         </nav>
 
-        <div class="overview">
-            <section class="overview-card">
-                <h3>Hébergement</h3>
-                <p>Aucun hébergement ajouté pour le moment.</p>
-            </section>
-            <section class="overview-card">
-                <h3>Idées du voyage</h3>
-                <ul id="trip-activities"></ul>
-            </section>
-            <section class="overview-card">
-                <h3>Carte du voyage</h3>
-                <p>La carte apparaîtra ici.</p>
-            </section>
+        <div id="overview-panel">
+            <div class="overview">
+                <section class="overview-card">
+                    <h3>Hébergement</h3>
+
+                    <!-- Ces éléments restent visibles dans la carte -->
+                    <p id="lodging-display">Aucun hébergement ajouté pour le moment.</p>
+
+                    <button type="button" id="edit-lodging-button">
+                        Ajouter ou modifier le logement
+                    </button>
+
+                    <!-- Seul le formulaire apparaît dans la fenêtre -->
+                    <dialog id="lodging-dialog">
+                        <h2>Hébergement</h2>
+
+                        <form id="lodging-form">
+                            <label for="lodging-name">Nom du logement</label>
+                            <input type="text" id="lodging-name" required>
+
+                            <label for="lodging-address">Adresse</label>
+                            <input type="text" id="lodging-address" required>
+
+                            <button type="submit">Enregistrer</button>
+                        </form>
+
+                        <button type="button" id="close-lodging-button">
+                            Annuler
+                        </button>
+                    </dialog>
+                </section>
+                <section class="overview-card">
+                    <h3>Idées du voyage</h3>
+                    <ul id="trip-activities"></ul>
+                </section>
+                <section class="overview-card">
+                    <h3>Carte du voyage</h3>
+                    <p>La carte apparaîtra ici.</p>
+                </section>
+            </div>
+        
+            <!-- Aperçu de l'itinéraire -->
+            <div class="overview-details">
+                <section class="overview-card">
+                    <h3>Itinéraire</h3>
+                    <p>Aucune activité n’est planifiée pour le moment.</p>
+                </section>
+                <!-- Aperçu des membres -->
+                <section class="overview-card">
+                    <h3>Membres du voyage</h3>
+                    <p>Les membres apparaîtront ici.</p>
+                </section>
+            </div>
         </div>
 
-        <!-- Aperçu de l'itinéraire -->
-         
-        <div class="overview-details">
-            <section class="overview-card">
-                <h3>Itinéraire</h3>
-                <p>Aucune activité n’est planifiée pour le moment.</p>
-            </section>
-            <!-- Aperçu des membres -->
-            <section class="overview-card">
-                <h3>Membres du voyage</h3>
-                <p>Les membres apparaîtront ici.</p>
-            </section>
-        </div>
-
-        <section>
+        <section id="ideas-panel" hidden>
             <h2>Activités</h2>
             <!-- Formulaire pour ajouter une activité -->
             <form id="activity-form">
@@ -67,7 +97,7 @@
             <!-- Les activités seront affichées dans cette liste -->
             <ul id="activity-list"></ul>
         </section>
-        
+
     </main>
     <script src="js/trip.js"></script>
 </body>
