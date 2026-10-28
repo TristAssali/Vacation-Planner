@@ -2,6 +2,7 @@ import { getSavedTrip } from "./trip/storage.js";
 import { initializeActivities } from "./trip/activities.js";
 import { initializeLodging } from "./trip/lodging.js";
 import { showActivitiesMap } from "./trip/map.js";
+import { initializePlaceSearch } from "./trip/place-search.js";
 
 const trip = getSavedTrip();
 
@@ -24,7 +25,7 @@ if (trip) {
 
 initializeActivities(trip);
 initializeLodging(trip);
-
+initializePlaceSearch();
 const overviewButton = document.getElementById("overview-button");
 const ideasButton = document.getElementById("ideas-button");
 const overviewPanel = document.getElementById("overview-panel");

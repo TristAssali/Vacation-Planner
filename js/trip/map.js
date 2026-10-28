@@ -87,3 +87,41 @@ export function focusActivityOnMap(coordinates) {
         16 //niveau zoom
     );
 }
+
+export function selectLocationOnMap(coordinates) {
+    if (!activitiesMap) {
+        return;
+    }
+
+    // Déplace le marqueur de sélection ou le crée
+    if (selectedLocationMarker) {
+        selectedLocationMarker.setLatLng(coordinates);
+    } else {
+        selectedLocationMarker = L.marker(coordinates).addTo(activitiesMap);
+    }
+
+    // Centre la carte sur le lieu sélectionné
+    activitiesMap.setView(coordinates, 16);
+}
+
+// Explore une zone sans la sélectionner comme emplacement d'activité
+export function explorePlaceOnMap(place) {
+    if (!activitiesMap) {
+        return;
+    }
+
+    const zoomByType = {
+        country: 5,
+        state: 7,
+        county: 9,
+        city: 11,
+        postcode: 13,
+        district: 13,
+        suburb: 14,
+        street: 15
+    };
+
+    const zoom = zoomByType[place.result_type] ?? 12;
+
+    activitiesMap.setView([place.lat, place.lon], zoom);
+}

@@ -247,3 +247,66 @@ nav[aria-label="Sections du voyage"] {
         grid-template-columns: 1fr;
     }
 }
+
+/* Retire les puces et espace les résultats */
+#place-search-results {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+    display: grid;
+    gap: 8px;
+}
+/* Présente chaque résultat comme une ligne sélectionnable */
+#place-search-results button {
+    width: 100%;
+    padding: 12px 14px;
+    text-align: left;
+    font: inherit;
+    line-height: 1.5;
+    color: #334155;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+/* Met en évidence le résultat survolé ou sélectionné au clavier */
+#place-search-results button:hover,
+#place-search-results button:focus-visible {
+    background-color: #eff6ff;
+    border-color: #2563eb;
+}
+/* Rend le message de recherche moins dominant */
+#place-search-status {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Sert de point d'ancrage à la liste déroulante */
+.place-search-container {
+    position: relative;
+}
+#place-search-form input {
+    max-width: none;
+    width: 100%;
+}
+/* Affiche les résultats par-dessus le contenu, sous le champ */
+#place-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+    max-height: 260px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 6px;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+/* Préserve le masquage malgré le display: grid ajouté précédemment */
+#place-search-results[hidden] {
+    display: none;
+}

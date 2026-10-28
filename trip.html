@@ -116,6 +116,36 @@
                 </div>
                 <div>   
                     <h3>Carte des activités</h3>
+
+                    <!-- Recherche un lieu avant de sélectionner son emplacement -->
+                    <form id="place-search-form">
+                        <label for="place-search">Rechercher un lieu ou une adresse</label>
+
+                        <!-- Positionne les résultats directement sous le champ -->
+                        <div class="place-search-container">
+                            <input
+                                type="search"
+                                id="place-search"
+                                placeholder="Ex. : Montréal"
+                                required
+                            >
+
+                            <ul id="place-search-results" hidden></ul>
+                        </div>
+
+                        <button type="submit">Rechercher</button>
+                    </form>
+                    <!-- Annonce le chargement, les erreurs ou l'absence de résultats -->
+                    <p id="place-search-status" role="status"></p>
+
+                    <!-- Attribution du fournisseur de recherche -->
+                    <small>
+                        Recherche :
+                        <a href="https://www.geoapify.com/" target="_blank" rel="noopener">
+                            Geoapify
+                        </a>
+                    </small>
+
                     <div id="activities-map"></div>
                 </div>
             </div>
