@@ -1,4 +1,5 @@
 import { getSavedTrip } from "./storage.js";
+import { findDestination } from "./geocoding.js";
 
 let activitiesMap = null;
 let selectedLocationMarker = null;
@@ -7,13 +8,14 @@ let activityMarkers = null;
 export function showActivitiesMap() {
     if (!activitiesMap) {
         // La carte est créée à la première ouverture de l’onglet.
-        activitiesMap = L.map("activities-map").setView([40.7128, -74.0060], 12);
+        activitiesMap = L.map("activities-map").setView([20, 0], 2);
 
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19,
             attribution:
                 '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(activitiesMap);
+        centerMapOnDestination();
 
         activitiesMap.on("click", function (event) {
             const coordinates = event.latlng;
@@ -125,3 +127,49 @@ export function explorePlaceOnMap(place) {
 
     activitiesMap.setView([place.lat, place.lon], zoom);
 }
+
+// Centre la carte sur la destination enregistrée dans le voyage
+async function centerMapOnDestination() {
+    const trip = getSavedTrip();
+    const status = document.getElementById("place-search-status");
+
+    if (!trip?.destination) {
+        return;
+    }
+
+    // Évite de déplacer la carte si l'utilisateur commence déjà à l'utiliser
+    let userInteracted = false;
+
+    function markInteraction() {
+        userInteracted = true;
+    }
+
+    activitiesMap.on("mousedown touchstart keydown", markInteraction);
+
+    try {
+        const place = await findDestination(trip.destination);
+
+        if (userInteracted) {
+            return;
+        }
+
+        if (place) {
+            explorePlaceOnMap(place);
+        } else {
+            status.textContent =
+                "Destination introuvable. Utilise la recherche pour explorer la carte.";
+        }
+    } catch {
+        if (!userInteracted) {
+            status.textContent =
+                "Impossible de localiser la destination. Tu peux utiliser la carte et réessayer avec la recherche.";
+        }
+    } finally {
+        // Retire l'écouteur devenu inutile après la recherche
+        activitiesMap.off("mousedown touchstart keydown", markInteraction);
+    }
+}
+
+
+
+
