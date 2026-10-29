@@ -4,6 +4,7 @@ import { findDestination } from "./geocoding.js";
 let activitiesMap = null;
 let selectedLocationMarker = null;
 let activityMarkers = null;
+let lodgingMarker = null;
 
 export function showActivitiesMap() {
     if (!activitiesMap) {
@@ -30,6 +31,8 @@ export function showActivitiesMap() {
 
     activitiesMap.invalidateSize();
     displayActivityMarkers();
+    // Affiche aussi le logement à l'ouverture de la carte
+    displayLodgingMarker();
 }
 
 export function getSelectedLocationCoordinates() {
@@ -185,6 +188,46 @@ async function centerMapOnDestination() {
     }
 }
 
+// Affiche le logement enregistré sur la carte
+export function displayLodgingMarker() {
+    if (!activitiesMap) {
+        return;
+    }
+
+    // Retire le précédent marqueur avant de reconstruire l'affichage
+    if (lodgingMarker) {
+        activitiesMap.removeLayer(lodgingMarker);
+        lodgingMarker = null;
+    }
+
+    const lodging = getSavedTrip()?.lodging;
+
+    if (
+        !Number.isFinite(lodging?.coordinates?.lat) ||
+        !Number.isFinite(lodging?.coordinates?.lng)
+    ) {
+        return;
+    }
+
+    // Distingue le logement des marqueurs d'activités
+    const icon = L.divIcon({
+        className: "lodging-marker",
+        html: '<span aria-label="Hébergement">🏨</span>',
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor: [0, -36]
+    });
+
+    const popupContent = document.createElement("span");
+    popupContent.textContent = lodging.name + " — " + lodging.address;
+
+    lodgingMarker = L.marker(
+        [lodging.coordinates.lat, lodging.coordinates.lng],
+        { icon: icon }
+    )
+        .bindPopup(popupContent)
+        .addTo(activitiesMap);
+}
 
 
 

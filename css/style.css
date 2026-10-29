@@ -359,3 +359,46 @@ nav[aria-label="Sections du voyage"] {
     color: #64748b;
     font-size: 0.9rem;
 }
+
+/* Présente les suggestions dans le dialogue sans les couper */
+#lodging-address-results {
+    list-style: none;
+    padding: 4px;
+    margin: 8px 0;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+/* Chaque résultat reste lisible, même avec une longue adresse */
+#lodging-address-results button {
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    font: inherit;
+    line-height: 1.4;
+    color: #334155;
+    background-color: white;
+    overflow-wrap: anywhere;
+}
+#lodging-address-results button:hover,
+#lodging-address-results button:focus-visible {
+    background-color: #eff6ff;
+}
+#lodging-search-status {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+/* Distingue le logement sur la carte */
+.lodging-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #2563eb;
+    border-radius: 50%;
+    box-sizing: border-box;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
+    font-size: 21px;
+}

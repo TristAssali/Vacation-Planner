@@ -60,13 +60,23 @@
                             <p id="lodging-name-error" class="field-error" hidden></p>
 
                             <label for="lodging-address">Adresse</label>
-                            <input
-                                type="text"
-                                id="lodging-address"
-                                required
-                                aria-describedby="lodging-address-error"
-                            >
+                            <!-- Regroupe le champ et ses suggestions -->
+                            <div class="lodging-search-container">
+                                <input
+                                    type="text"
+                                    id="lodging-address"
+                                    required
+                                    autocomplete="off"
+                                    aria-describedby="lodging-address-error lodging-search-status"
+                                >
+                                <ul id="lodging-address-results" hidden></ul>
+                            </div>
+                            <p id="lodging-search-status" role="status"></p>
                             <p id="lodging-address-error" class="field-error" hidden></p>
+                            <small>
+                                Recherche :
+                                <a href="https://www.geoapify.com/">Geoapify</a>
+                            </small>
 
                             <div class="dialog-actions">
                                 <button type="button" id="close-lodging-button">Annuler</button>
