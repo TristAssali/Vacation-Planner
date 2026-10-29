@@ -310,3 +310,52 @@ nav[aria-label="Sections du voyage"] {
 #place-search-results[hidden] {
     display: none;
 }
+
+/* Aligne la liste de suggestions avec le champ Destination */
+.destination-search-container {
+    position: relative;
+    max-width: 400px;
+}
+
+.destination-search-container input {
+    max-width: none;
+    width: 100%;
+}
+
+/* Affiche les suggestions au-dessus du reste du formulaire */
+#destination-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+#destination-results[hidden] {
+    display: none;
+}
+/* Présente chaque suggestion comme une option cliquable */
+#destination-results button {
+    width: 100%;
+    padding: 10px 12px;
+    text-align: left;
+    font: inherit;
+    color: #334155;
+    background-color: transparent;
+}
+#destination-results button:hover,
+#destination-results button:focus-visible {
+    background-color: #eff6ff;
+}
+#destination-status {
+    color: #64748b;
+    font-size: 0.9rem;
+}

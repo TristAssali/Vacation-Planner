@@ -137,6 +137,21 @@ async function centerMapOnDestination() {
         return;
     }
 
+    // Utilise directement la destination choisie lors de la création
+    if (
+        Number.isFinite(trip.destinationLocation?.lat) &&
+        Number.isFinite(trip.destinationLocation?.lng)
+    ) {
+        explorePlaceOnMap({
+            lat: trip.destinationLocation.lat,
+            lon: trip.destinationLocation.lng,
+            result_type: trip.destinationLocation.type
+        });
+
+        // Évite une recherche API puisque les coordonnées sont connues
+        return;
+    }
+
     // Évite de déplacer la carte si l'utilisateur commence déjà à l'utiliser
     let userInteracted = false;
 

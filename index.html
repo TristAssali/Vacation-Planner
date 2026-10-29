@@ -19,7 +19,23 @@
             <p id="trip-name-error" class="field-error" hidden></p>
 
             <label for="destination">Destination</label>
-            <input type="text" id="destination" required aria-describedby="destination-error">
+            <!-- Positionne les suggestions sous le champ -->
+            <div class="destination-search-container">
+                <input
+                    type="text"
+                    id="destination"
+                    required
+                    autocomplete="off"
+                    aria-describedby="destination-error destination-status"
+                >
+                <ul id="destination-results" hidden></ul>
+            </div>
+            <!-- Informe du chargement ou d'un problème de recherche -->
+            <p id="destination-status" role="status"></p>
+            <small>
+                Recherche :
+                <a href="https://www.geoapify.com/">Geoapify</a>
+            </small>
             <p id="destination-error" class="field-error" hidden></p>
 
             <label for="departure-date">Date de départ</label>
@@ -41,7 +57,9 @@
         <p id="display-return"></p>
         </section>
 
+        <script type="module" src="js/script.js"></script>
+
     </body>
-    <script src="js/script.js"></script>
+    
 
 </html>

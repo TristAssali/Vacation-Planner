@@ -1,19 +1,27 @@
+import { initializeDestinationSearch } from "./destination-search.js";
+
 console.log("JavaScript est connecté !");
 
 const tripForm = document.getElementById("trip-form");
+const destinationSearch = initializeDestinationSearch();
 // Récupère le formulaire et la liste des activités
 
 tripForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const tripName = document.getElementById("trip-name").value.trim();
     const destination = document.getElementById("destination").value.trim();
+    const selectedDestination = destinationSearch.getSelectedDestination();
     
     const departureDate = document.getElementById("departure-date").value;
     const returnDate = document.getElementById("return-date").value;
     // Prépare les messages selon les valeurs entrées
     const errors = {
         "trip-name": tripName ? "" : "Entre un nom pour le voyage.",
-        "destination": destination ? "" : "Entre une destination.",
+        "destination": !destination
+            ? "Entre une destination."
+            : !selectedDestination || selectedDestination.label !== destination
+                ? "Sélectionne une destination dans les suggestions."
+                : "",
         "departure-date": "",
         "return-date": ""
     };
@@ -45,10 +53,16 @@ tripForm.addEventListener("submit", function (event) {
     const trip = {
         name: tripName,
         destination: destination,
+        destinationLocation: {
+            lat: selectedDestination.lat,
+            lng: selectedDestination.lng,
+            type: selectedDestination.type
+        },
         departureDate: departureDate,
         returnDate: returnDate,
         activities: [] 
     };
+
     
     // Convertit l'objet en texte JSON, puis le sauvegarde dans le navigateur.
     localStorage.setItem("trip", JSON.stringify(trip));
