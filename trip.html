@@ -127,8 +127,21 @@
                     <ul id="trip-activities"></ul>
                 </section>
                 <section class="overview-card">
-                    <h3>Carte du voyage</h3>
-                    <p>La carte apparaîtra ici.</p>
+                    <div class="card-heading">
+                        <h3>Carte du voyage</h3>
+
+                        <!-- Ouvre la carte principale -->
+                        <button
+                            type="button"
+                            id="open-map-button"
+                            class="secondary-button"
+                        >
+                            Ouvrir
+                        </button>
+                    </div>
+
+                    <!-- Aperçu du logement et des activités -->
+                    <div id="overview-map" aria-label="Aperçu de la carte du voyage"></div>
                 </section>
             </div>
         

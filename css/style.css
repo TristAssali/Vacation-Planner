@@ -447,3 +447,11 @@ nav[aria-label="Sections du voyage"] {
     line-height: 1.6;
     overflow-wrap: anywhere;
 }
+
+/* Donne une hauteur à la carte d'aperçu */
+#overview-map {
+    height: 240px;
+    margin-top: 16px;
+    border-radius: 12px;
+    background-color: #e2e8f0;
+}

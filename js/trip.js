@@ -3,6 +3,7 @@ import { initializeActivities } from "./trip/activities.js";
 import { initializeLodging } from "./trip/lodging.js";
 import { showActivitiesMap, focusActivityOnMap } from "./trip/map.js";
 import { initializePlaceSearch } from "./trip/place-search.js";
+import { showOverviewMap } from "./trip/overview-map.js";
 
 
 const trip = getSavedTrip();
@@ -37,6 +38,7 @@ overviewButton.addEventListener("click", function () {
     ideasPanel.hidden = true;
     overviewButton.classList.add("active");
     ideasButton.classList.remove("active");
+    requestAnimationFrame(showOverviewMap);
 });
 
 ideasButton.addEventListener("click", function () {
@@ -72,5 +74,16 @@ document.getElementById("view-lodging-button").addEventListener(
             showActivitiesMap();
             focusActivityOnMap(lodging.coordinates);
         });
+    }
+);
+
+// Affiche l'aperçu au chargement de la page
+requestAnimationFrame(showOverviewMap);
+
+// Ouvre l'onglet qui contient la grande carte
+document.getElementById("open-map-button").addEventListener(
+    "click",
+    function () {
+        ideasButton.click();
     }
 );

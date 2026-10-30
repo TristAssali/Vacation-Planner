@@ -1,6 +1,7 @@
 import { getSavedTrip, saveTrip } from "./storage.js";
 import { findPlaceSuggestions } from "./geocoding.js";
 import { displayLodgingMarker } from "./map.js";
+import { showOverviewMap } from "./overview-map.js";
 
 export function initializeLodging(trip) {
     const lodgingDialog = document.getElementById("lodging-dialog");
@@ -50,6 +51,7 @@ export function initializeLodging(trip) {
 
             currentTrip.lodging = { name: name, address: address, coordinates: selectedCoordinates };
             saveTrip(currentTrip);
+            showOverviewMap();
             updateMapButton(currentTrip.lodging);
             displayLodgingMarker();
             document.getElementById("lodging-display").textContent =

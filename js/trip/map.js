@@ -184,7 +184,7 @@ async function centerMapOnDestination() {
         }
     } finally {
         // Retire l'écouteur devenu inutile après la recherche
-        activitiesMap.off("mousedown touchstart keydown", markInteraction);
+        activitiesMap.off("mousedown touchstart keydown movestart", markInteraction);
     }
 }
 
