@@ -1,8 +1,9 @@
 import { getSavedTrip } from "./trip/storage.js";
 import { initializeActivities } from "./trip/activities.js";
 import { initializeLodging } from "./trip/lodging.js";
-import { showActivitiesMap } from "./trip/map.js";
+import { showActivitiesMap, focusActivityOnMap } from "./trip/map.js";
 import { initializePlaceSearch } from "./trip/place-search.js";
+
 
 const trip = getSavedTrip();
 
@@ -49,3 +50,27 @@ ideasButton.addEventListener("click", function () {
 document.getElementById("back-button").addEventListener("click", function () {
     window.location.href = "index.html";
 });
+
+// Ouvre l'onglet de la carte et montre le logement
+document.getElementById("view-lodging-button").addEventListener(
+    "click",
+    function () {
+        const lodging = getSavedTrip()?.lodging;
+
+        if (!lodging?.coordinates) {
+            return;
+        }
+
+        // Affiche le panneau et sélectionne son onglet
+        overviewPanel.hidden = true;
+        ideasPanel.hidden = false;
+        overviewButton.classList.remove("active");
+        ideasButton.classList.add("active");
+
+        // Attend que le panneau soit visible avant de créer et centrer la carte
+        requestAnimationFrame(function () {
+            showActivitiesMap();
+            focusActivityOnMap(lodging.coordinates);
+        });
+    }
+);

@@ -162,7 +162,7 @@ async function centerMapOnDestination() {
         userInteracted = true;
     }
 
-    activitiesMap.on("mousedown touchstart keydown", markInteraction);
+    activitiesMap.on("mousedown touchstart keydown movestart", markInteraction);
 
     try {
         const place = await findDestination(trip.destination);

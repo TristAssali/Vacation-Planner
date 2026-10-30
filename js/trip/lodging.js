@@ -50,6 +50,7 @@ export function initializeLodging(trip) {
 
             currentTrip.lodging = { name: name, address: address, coordinates: selectedCoordinates };
             saveTrip(currentTrip);
+            updateMapButton(currentTrip.lodging);
             displayLodgingMarker();
             document.getElementById("lodging-display").textContent =
                 name + " — " + address;
@@ -86,6 +87,17 @@ export function initializeLodging(trip) {
             lodgingDialog.close();
         }
     );
+
+    const viewLodgingButton = document.getElementById("view-lodging-button");
+    // Affiche le bouton seulement si le logement peut être placé sur la carte
+    function updateMapButton(lodging) {
+        viewLodgingButton.hidden = !(
+            Number.isFinite(lodging?.coordinates?.lat) &&
+            Number.isFinite(lodging?.coordinates?.lng)
+        );
+    }
+
+    updateMapButton(trip?.lodging);
 
     const resultsList = document.getElementById("lodging-address-results");
     const searchStatus = document.getElementById("lodging-search-status");

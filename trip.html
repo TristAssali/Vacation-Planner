@@ -34,21 +34,51 @@
         <div id="overview-panel">
             <div class="overview">
                 <section class="overview-card">
-                    <h3>Hébergement</h3>
+                    <!-- Titre et icône de localisation -->
+                    <div class="card-heading">
+                        <h3>Hébergement</h3>
 
-                    <!-- Ces éléments restent visibles dans la carte -->
+                        <button
+                            type="button"
+                            id="view-lodging-button"
+                            class="location-button"
+                            aria-label="Voir le logement sur la carte"
+                            title="Voir sur la carte"
+                            hidden
+                        >
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                aria-hidden="true"
+                            >
+                                <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Résumé du logement enregistré -->
                     <p id="lodging-display">Aucun hébergement ajouté pour le moment.</p>
 
-                    <button type="button" id="edit-lodging-button">
-                        Ajouter ou modifier le logement
+                    <button
+                        type="button"
+                        id="edit-lodging-button"
+                        class="secondary-button"
+                    >
+                        Ajouter ou modifier
                     </button>
 
-                    <!-- Seul le formulaire apparaît dans la fenêtre -->
-                    <dialog id="lodging-dialog">
-                        <h2>Hébergement</h2>
-                        <p class="dialog-description">Ajoute le logement prévu pour ton voyage.</p>
+                    <!-- Fenêtre de modification du logement -->
+                    <dialog id="lodging-dialog" aria-labelledby="lodging-dialog-title">
+                        <h2 id="lodging-dialog-title">Hébergement</h2>
+                        <p class="dialog-description">
+                            Ajoute le logement prévu pour ton voyage.
+                        </p>
 
-                        <!-- La validation sera gérée en JavaScript -->
                         <form id="lodging-form" novalidate>
                             <label for="lodging-name">Nom du logement</label>
                             <input
@@ -60,7 +90,8 @@
                             <p id="lodging-name-error" class="field-error" hidden></p>
 
                             <label for="lodging-address">Adresse</label>
-                            <!-- Regroupe le champ et ses suggestions -->
+
+                            <!-- Champ et suggestions d'adresses -->
                             <div class="lodging-search-container">
                                 <input
                                     type="text"
@@ -69,17 +100,23 @@
                                     autocomplete="off"
                                     aria-describedby="lodging-address-error lodging-search-status"
                                 >
+
                                 <ul id="lodging-address-results" hidden></ul>
                             </div>
+
                             <p id="lodging-search-status" role="status"></p>
                             <p id="lodging-address-error" class="field-error" hidden></p>
+
                             <small>
                                 Recherche :
                                 <a href="https://www.geoapify.com/">Geoapify</a>
                             </small>
 
+                            <!-- Actions du formulaire -->
                             <div class="dialog-actions">
-                                <button type="button" id="close-lodging-button">Annuler</button>
+                                <button type="button" id="close-lodging-button">
+                                    Annuler
+                                </button>
                                 <button type="submit">Enregistrer</button>
                             </div>
                         </form>

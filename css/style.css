@@ -402,3 +402,48 @@ nav[aria-label="Sections du voyage"] {
     box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
     font-size: 21px;
 }
+
+/* Aligne le titre et l'icône */
+.card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.card-heading h3 {
+    margin: 0;
+}
+/* Petit bouton de localisation */
+.location-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    color: #2563eb;
+    background-color: #eff6ff;
+    border-radius: 10px;
+}
+.location-button:hover {
+    background-color: #dbeafe;
+}
+/* Respecte le masquage si le logement n'a pas de coordonnées */
+.location-button[hidden] {
+    display: none;
+}
+/* Bouton d'édition plus discret */
+.secondary-button {
+    color: #334155;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+}
+.secondary-button:hover {
+    background-color: #e2e8f0;
+}
+/* Améliore la lecture des longues adresses */
+#lodging-display {
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
