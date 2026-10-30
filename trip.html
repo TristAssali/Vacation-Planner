@@ -214,6 +214,34 @@
 
     </main>
 
+    <!-- Fenêtre de modification d'une activité -->
+    <dialog id="edit-activity-dialog" aria-labelledby="edit-activity-title">
+        <h2 id="edit-activity-title">Modifier l’activité</h2>
+
+        <form id="edit-activity-form" novalidate>
+            <label for="edit-activity-name">Nom de l’activité</label>
+            <input
+                type="text"
+                id="edit-activity-name"
+                required
+                aria-describedby="edit-activity-name-error"
+            >
+            <p id="edit-activity-name-error" class="field-error" hidden></p>
+
+            <div class="dialog-actions">
+                <button
+                    type="button"
+                    id="cancel-edit-activity"
+                    class="secondary-button"
+                >
+                    Annuler
+                </button>
+
+                <button type="submit">Enregistrer</button>
+            </div>
+        </form>
+    </dialog>
+
     <!-- Leaflet définit L avant l’initialisation du module de la page. -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="js/trip.js"></script>

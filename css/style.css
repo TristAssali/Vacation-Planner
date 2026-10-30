@@ -447,11 +447,59 @@ nav[aria-label="Sections du voyage"] {
     line-height: 1.6;
     overflow-wrap: anywhere;
 }
-
 /* Donne une hauteur à la carte d'aperçu */
 #overview-map {
     height: 240px;
     margin-top: 16px;
     border-radius: 12px;
     background-color: #e2e8f0;
+}
+
+/* Fenêtre de modification d'une activité */
+#edit-activity-dialog {
+    box-sizing: border-box;
+    width: min(460px, 90vw);
+    max-width: 90vw;
+    padding: 28px;
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgb(0 0 0 / 20%);
+}
+#edit-activity-dialog::backdrop {
+    background-color: rgb(0 0 0 / 40%);
+}
+#edit-activity-dialog h2 {
+    margin-top: 0;
+}
+#edit-activity-dialog input {
+    max-width: none;
+}
+/* Signale un nom vide */
+#edit-activity-dialog input[aria-invalid="true"] {
+    border-color: #dc2626;
+    background-color: #fff5f5;
+}
+#edit-activity-dialog input[aria-invalid="true"]:focus {
+    outline: 3px solid #fee2e2;
+}
+
+/* Garde les actions groupées, avec un retour à la ligne si nécessaire */
+.activity-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+}
+/* Empile le texte et les actions sur téléphone */
+@media (max-width: 600px) {
+    #activity-list li {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .activity-actions {
+        justify-content: flex-start;
+    }
 }

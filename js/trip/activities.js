@@ -8,8 +8,76 @@ import {
 
 const activityForm = document.getElementById("activity-form");
 const activityList = document.getElementById("activity-list");
+const editDialog = document.getElementById("edit-activity-dialog");
+const editForm = document.getElementById("edit-activity-form");
+const editNameInput = document.getElementById("edit-activity-name");
+const editNameError = document.getElementById("edit-activity-name-error");
+
+// Retient la position de l'activité en cours de modification
+let editingIndex = null;
 
 export function initializeActivities(trip) {
+
+    editForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const name = editNameInput.value.trim();
+
+    editNameInput.setAttribute("aria-invalid", String(!name));
+    editNameError.textContent = name ? "" : "Entre un nom pour l'activité.";
+    editNameError.hidden = Boolean(name);
+
+    if (!name) {
+        editNameInput.focus();
+        return;
+    }
+
+    const currentTrip = getSavedTrip();
+
+    if (
+        editingIndex === null ||
+        !currentTrip?.activities ||
+        editingIndex >= currentTrip.activities.length
+    ) {
+        return;
+    }
+
+    const activity = currentTrip.activities[editingIndex];
+
+    // Convertit aussi une ancienne activité enregistrée comme simple texte
+    currentTrip.activities[editingIndex] =
+        typeof activity === "string"
+            ? { name: name, location: "", coordinates: null }
+            : { ...activity, name: name };
+
+    saveTrip(currentTrip);
+    displayActivities(currentTrip);
+    displayActivityMarkers();
+    editDialog.close();
+});
+
+// Ferme la fenêtre sans modifier l'activité
+document.getElementById("cancel-edit-activity").addEventListener(
+    "click",
+    function () {
+        editDialog.close();
+    }
+);
+
+// Oublie la sélection après une fermeture, y compris avec Échap
+editDialog.addEventListener("close", function () {
+    editingIndex = null;
+});
+
+// Efface l'erreur dès que le nom est corrigé
+editNameInput.addEventListener("input", function () {
+    if (editNameInput.value.trim()) {
+        editNameInput.removeAttribute("aria-invalid");
+        editNameError.hidden = true;
+        editNameError.textContent = "";
+    }
+});
+    
     if (trip) {
         displayActivities(trip);
     }
@@ -61,6 +129,8 @@ function displayActivities(trip) {
         const name = typeof activity === "string" ? activity : activity.name;
         const location = typeof activity === "string" ? "" : activity.location;
         listItem.textContent = location ? name + " — " + location : name;
+        const actions = document.createElement("div");
+        actions.classList.add("activity-actions");
 
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Supprimer";
@@ -83,17 +153,55 @@ function displayActivities(trip) {
         // Propose le centrage seulement si l'activité possède un emplacement
         if (typeof activity !== "string" && activity.coordinates) {
             const mapButton = document.createElement("button");
+            // Utilise la même icône de localisation que pour le logement
             mapButton.type = "button";
-            mapButton.textContent = "Voir sur la carte";
+            mapButton.classList.add("location-button");
+            mapButton.setAttribute("aria-label", "Voir sur la carte : " + name);
+            mapButton.title = "Voir sur la carte";
+
+            // Icône fixe : aucune donnée saisie n'est insérée dans le HTML
+            mapButton.innerHTML = `
+                <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                >
+                    <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+            `;
 
             mapButton.addEventListener("click", function () {
                 focusActivityOnMap(activity.coordinates);
             });
 
-            listItem.appendChild(mapButton);
+            actions.appendChild(mapButton);
         }
 
-        listItem.appendChild(deleteButton);
+        // Ouvre la fenêtre avec le nom actuel de l'activité
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.textContent = "Modifier";
+        editButton.classList.add("secondary-button");
+
+        editButton.addEventListener("click", function () {
+            editingIndex = index;
+            editNameInput.value = name;
+            editNameInput.removeAttribute("aria-invalid");
+            editNameError.hidden = true;
+            editNameError.textContent = "";
+
+            editDialog.showModal();
+        });
+
+        actions.appendChild(editButton);
+
+        actions.appendChild(deleteButton);
+        listItem.appendChild(actions);
         activityList.appendChild(listItem);
     }
 
