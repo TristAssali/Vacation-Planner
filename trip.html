@@ -219,6 +219,7 @@
         <h2 id="edit-activity-title">Modifier l’activité</h2>
 
         <form id="edit-activity-form" novalidate>
+            <!-- Nom obligatoire de l'activité -->
             <label for="edit-activity-name">Nom de l’activité</label>
             <input
                 type="text"
@@ -228,6 +229,24 @@
             >
             <p id="edit-activity-name-error" class="field-error" hidden></p>
 
+            <!-- Recherche du nouvel emplacement -->
+            <label for="edit-activity-location">Emplacement (facultatif)</label>
+            <input
+                type="text"
+                id="edit-activity-location"
+                autocomplete="off"
+                aria-describedby="edit-location-status"
+            >
+
+            <ul id="edit-location-results" hidden></ul>
+            <p id="edit-location-status" role="status"></p>
+
+            <small>
+                Recherche :
+                <a href="https://www.geoapify.com/">Geoapify</a>
+            </small>
+
+            <!-- Actions de la fenêtre -->
             <div class="dialog-actions">
                 <button
                     type="button"

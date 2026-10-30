@@ -5,6 +5,7 @@ import {
     getSelectedLocationCoordinates,
     focusActivityOnMap
 } from "./map.js";
+import { findPlaceSuggestions } from "./geocoding.js";
 
 const activityForm = document.getElementById("activity-form");
 const activityList = document.getElementById("activity-list");
@@ -12,11 +13,107 @@ const editDialog = document.getElementById("edit-activity-dialog");
 const editForm = document.getElementById("edit-activity-form");
 const editNameInput = document.getElementById("edit-activity-name");
 const editNameError = document.getElementById("edit-activity-name-error");
+const editLocationInput = document.getElementById("edit-activity-location");
 
 // Retient la position de l'activité en cours de modification
 let editingIndex = null;
+// Conserve le lieu sélectionné pendant la modification
+let editedCoordinates = null;
+let editSearchTimer = null;
+let editSearchController = null;
+let editSearchVersion = 0;
+
+const editResults = document.getElementById("edit-location-results");
+const editStatus = document.getElementById("edit-location-status");
+
+// Annule la recherche et efface les suggestions précédentes
+function cancelEditSearch() {
+    clearTimeout(editSearchTimer);
+    editSearchController?.abort();
+    editSearchVersion++;
+
+    editResults.replaceChildren();
+    editResults.hidden = true;
+    editStatus.textContent = "";
+}
 
 export function initializeActivities(trip) {
+    // Recherche les lieux après une pause dans la saisie
+    editLocationInput.addEventListener("input", function () {
+        cancelEditSearch();
+
+        // Le nouveau texte ne correspond plus aux anciennes coordonnées
+        editedCoordinates = null;
+
+        const query = editLocationInput.value.trim();
+
+        if (query.length < 3) {
+            return;
+        }
+
+        const version = editSearchVersion;
+
+        editSearchTimer = setTimeout(async function () {
+            editSearchController = new AbortController();
+            editStatus.textContent = "Recherche en cours…";
+
+            try {
+                const results = await findPlaceSuggestions(
+                    query,
+                    editSearchController.signal
+                );
+
+                if (version !== editSearchVersion) {
+                    return;
+                }
+
+                for (const place of results) {
+                    const item = document.createElement("li");
+                    const button = document.createElement("button");
+
+                    button.type = "button";
+                    button.textContent = place.formatted;
+
+                    button.addEventListener("click", function () {
+                        cancelEditSearch();
+
+                        // Prépare le nouveau lieu sans encore modifier le voyage
+                        editLocationInput.value = place.formatted;
+                        editedCoordinates = {
+                            lat: place.lat,
+                            lng: place.lon
+                        };
+
+                        editStatus.textContent = "Nouvel emplacement sélectionné.";
+                    });
+
+                    item.appendChild(button);
+                    editResults.appendChild(item);
+                }
+
+                editResults.hidden = results.length === 0;
+                editStatus.textContent = results.length
+                    ? "Sélectionne le nouvel emplacement."
+                    : "Aucun lieu trouvé.";
+            } catch (error) {
+                if (
+                    error.name === "AbortError" ||
+                    version !== editSearchVersion
+                ) {
+                    return;
+                }
+
+                editStatus.textContent =
+                    "Recherche indisponible. Tu peux garder un emplacement sans coordonnées.";
+            }
+        }, 400);
+    });
+
+    // Empêche une réponse de recherche de réapparaître après la fermeture
+    editDialog.addEventListener("close", function () {
+        cancelEditSearch();
+        editedCoordinates = null;
+    });
 
     editForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -44,11 +141,13 @@ export function initializeActivities(trip) {
 
     const activity = currentTrip.activities[editingIndex];
 
-    // Convertit aussi une ancienne activité enregistrée comme simple texte
-    currentTrip.activities[editingIndex] =
-        typeof activity === "string"
-            ? { name: name, location: "", coordinates: null }
-            : { ...activity, name: name };
+    // Enregistre le texte et les coordonnées du lieu choisi
+    currentTrip.activities[editingIndex] = {
+        ...(typeof activity === "string" ? {} : activity),
+        name: name,
+        location: editLocationInput.value.trim(),
+        coordinates: editedCoordinates
+    };
 
     saveTrip(currentTrip);
     displayActivities(currentTrip);
@@ -191,6 +290,11 @@ function displayActivities(trip) {
         editButton.addEventListener("click", function () {
             editingIndex = index;
             editNameInput.value = name;
+            editLocationInput.value = location || "";
+            editedCoordinates =
+                typeof activity === "string" ? null : (activity.coordinates || null);
+
+            cancelEditSearch();
             editNameInput.removeAttribute("aria-invalid");
             editNameError.hidden = true;
             editNameError.textContent = "";
