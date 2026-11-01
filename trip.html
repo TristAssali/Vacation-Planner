@@ -366,6 +366,15 @@
             <p id="schedule-error" class="field-error" role="alert" hidden></p>
 
             <div class="dialog-actions">
+                <!-- Retire l'étape sans supprimer l'activité des idées -->
+                <button
+                    type="button"
+                    id="schedule-remove"
+                    class="danger-button"
+                >
+                    Supprimer l’activité
+                </button>
+
                 <button
                     type="button"
                     id="schedule-cancel"
@@ -377,6 +386,33 @@
                 <button type="submit">Enregistrer</button>
             </div>
         </form>
+    </dialog>
+
+    <!-- Confirmation de suppression définitive -->
+    <dialog id="delete-activity-dialog" aria-labelledby="delete-activity-title">
+        <h2 id="delete-activity-title">Supprimer l’activité ?</h2>
+
+        <p>
+            Elle sera retirée des idées et de toutes les journées du voyage.
+        </p>
+
+        <div class="dialog-actions">
+            <button
+                type="button"
+                id="cancel-delete-activity"
+                class="secondary-button"
+            >
+                Annuler
+            </button>
+
+            <button
+                type="button"
+                id="confirm-delete-activity"
+                class="danger-button"
+            >
+                Supprimer
+            </button>
+        </div>
     </dialog>
 
     <!-- Leaflet définit L avant l’initialisation du module de la page. -->

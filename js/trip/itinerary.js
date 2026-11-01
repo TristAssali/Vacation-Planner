@@ -42,6 +42,8 @@ let scheduledEntryId = null;
 export function displayItineraryDays() {
     // Branche les événements une seule fois
     if (!itineraryEventsInitialized) {
+
+        enableDailyDrop(document.getElementById("itinerary-day-items"));
         
         document.getElementById("previous-day").addEventListener(
             "click",
@@ -161,6 +163,73 @@ export function displayItineraryDays() {
         }
     );
 
+    const deleteDialog = document.getElementById("delete-activity-dialog");
+
+    // Ouvre notre fenêtre à la place de la confirmation du navigateur
+    document.getElementById("schedule-remove").addEventListener(
+        "click",
+        function () {
+            deleteDialog.showModal();
+
+            // Sélectionne Annuler par défaut pour éviter un clic accidentel
+            document.getElementById("cancel-delete-activity").focus();
+        }
+    );
+
+    // Ferme la confirmation et conserve la fenêtre Horaire
+    document.getElementById("cancel-delete-activity").addEventListener(
+        "click",
+        function () {
+            deleteDialog.close();
+        }
+    );
+
+    // Supprime l'activité uniquement après confirmation
+    document.getElementById("confirm-delete-activity").addEventListener(
+        "click",
+        function () {
+            const trip = getSavedTrip();
+            const day = trip?.days?.find(
+                day => day.id === scheduledDayId
+            );
+            const entry = day?.items?.find(
+                item => item.id === scheduledEntryId
+            );
+
+            if (!entry) {
+                deleteDialog.close();
+                return;
+            }
+
+            const activityId = entry.activityId;
+
+            // Retire l'activité des idées
+            trip.activities = (trip.activities || []).filter(
+                activity => activity.id !== activityId
+            );
+
+            // Retire toutes ses occurrences dans le programme
+            for (const tripDay of trip.days || []) {
+                tripDay.items = (tripDay.items || []).filter(
+                    item => item.activityId !== activityId
+                );
+            }
+
+            saveTrip(trip);
+
+            deleteDialog.close();
+            document.getElementById("schedule-dialog").close();
+
+            // Retient la vue à rouvrir après l'actualisation
+            sessionStorage.setItem(
+                "reopen-itinerary",
+                document.getElementById("itinerary-view").value
+            );
+
+            window.location.reload();
+        }
+    );
+
 
         itineraryEventsInitialized = true;
     }
@@ -260,6 +329,17 @@ function renderItinerary() {
             );
 
             const item = document.createElement("li");
+            // Identifie l'étape et permet de la déplacer dans la journée
+            item.dataset.entryId = entry.id;
+            item.draggable = true;
+
+            item.addEventListener("dragstart", function (event) {
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.setData("application/json", JSON.stringify({
+                    dayId: days[index].id,
+                    entryId: entry.id
+                }));
+            });
             const label = document.createElement("span");
 
             // Affiche l'heure et la durée lorsqu'elles sont connues
@@ -275,8 +355,8 @@ function renderItinerary() {
             // Retire uniquement cette étape du programme
             const removeButton = document.createElement("button");
             removeButton.type = "button";
-            removeButton.textContent = "Retirer du programme";
-            removeButton.classList.add("secondary-button");
+            removeButton.textContent = "Retirer";
+            removeButton.classList.add("danger-button");
 
             // Conserve les identifiants de la journée et de l'étape concernées
             const dayId = days[index].id;
@@ -352,8 +432,18 @@ function renderAvailableActivities(trip) {
             entry => entry.activityId === activity.id
         );
 
-        button.textContent = alreadyPlanned ? "Déjà ajoutée" : "Ajouter";
+        button.textContent = alreadyPlanned ? "✓ Ajoutée" : "+ Ajouter";
         button.disabled = !selectedDay || Boolean(alreadyPlanned);
+
+        // Une activité déjà présente ne peut pas être ajoutée deux fois
+        item.draggable = Boolean(selectedDay) && !alreadyPlanned;
+
+        item.addEventListener("dragstart", function (event) {
+            event.dataTransfer.effectAllowed = "copy";
+            event.dataTransfer.setData("application/json", JSON.stringify({
+                activityId: activity.id
+            }));
+        });
 
         button.addEventListener("click", function () {
             // Relit les données pour conserver les dernières modifications
@@ -491,6 +581,20 @@ function renderTripCalendar(trip, container, view) {
             openScheduleDialog(day.id, entry.id);
         });
 
+        // Permet de déplacer cette étape dans le calendrier
+        button.draggable = true;
+
+        button.addEventListener("dragstart", function (event) {
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData(
+                "application/json",
+                JSON.stringify({
+                    dayId: day.id,
+                    entryId: entry.id
+                })
+            );
+        });
+
         return button;
     }
 
@@ -499,6 +603,8 @@ function renderTripCalendar(trip, container, view) {
 
     for (const day of days) {
         const cell = addCell("precise-unscheduled");
+
+        enableCalendarDrop(cell, day.id, false);
 
         for (const entry of day.items || []) {
             if (!entry.startTime) {
@@ -520,6 +626,9 @@ function renderTripCalendar(trip, container, view) {
 
     for (const day of days) {
         const column = addCell("precise-day-column");
+
+            enableCalendarDrop(column, day.id, true);
+
 
         // Répartit les étapes qui se chevauchent dans des couloirs
         const entries = (day.items || [])
@@ -567,3 +676,266 @@ function renderTripCalendar(trip, container, view) {
 
     container.appendChild(calendar);
 }
+
+// Transforme une colonne du calendrier en zone de dépôt
+function enableCalendarDrop(element, targetDayId, timed) {
+    element.addEventListener("dragover", function (event) {
+        if (!event.dataTransfer.types.includes("application/json")) {
+            return;
+        }
+
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+    });
+
+    element.addEventListener("drop", function (event) {
+        event.preventDefault();
+
+        let source;
+
+        try {
+            source = JSON.parse(
+                event.dataTransfer.getData("application/json")
+            );
+        } catch {
+            return;
+        }
+
+        // Relit le voyage pour conserver ses dernières modifications
+        const trip = getSavedTrip();
+        const sourceDay = trip?.days?.find(
+            day => day.id === source.dayId
+        );
+        const targetDay = trip?.days?.find(
+            day => day.id === targetDayId
+        );
+        const entry = sourceDay?.items?.find(
+            item => item.id === source.entryId
+        );
+
+        if (!entry || !targetDay) {
+            return;
+        }
+
+        // Refuse un doublon de la même activité dans la journée cible
+        const duplicate = targetDay.items?.some(
+            item =>
+                item.activityId === entry.activityId &&
+                item.id !== entry.id
+        );
+
+        if (duplicate) {
+            alert("Cette activité est déjà planifiée dans cette journée.");
+            return;
+        }
+
+        let startTime = null;
+
+        if (timed) {
+            // Convertit la position verticale en minutes, par pas de 15 min
+            const bounds = element.getBoundingClientRect();
+            const minutesAtPointer =
+                (event.clientY - bounds.top) / bounds.height * 1440;
+
+            const minutes = Math.max(
+                0,
+                Math.min(1425, Math.round(minutesAtPointer / 15) * 15)
+            );
+
+            const hoursText = String(Math.floor(minutes / 60))
+                .padStart(2, "0");
+            const minutesText = String(minutes % 60).padStart(2, "0");
+
+            startTime = hoursText + ":" + minutesText;
+        }
+
+        // Déplace l'étape en conservant son identifiant et sa durée
+        sourceDay.items = sourceDay.items.filter(
+            item => item.id !== entry.id
+        );
+
+        if (!Array.isArray(targetDay.items)) {
+            targetDay.items = [];
+        }
+
+        targetDay.items.push({
+            ...entry,
+            startTime: startTime
+        });
+
+        saveTrip(trip);
+        renderItinerary();
+    });
+}
+
+// Ajoute ou réordonne les étapes avec un indicateur de dépôt
+function enableDailyDrop(list) {
+    // Ligne visuelle indépendante des cartes et sans effet sur leur position
+    const indicator = document.createElement("div");
+    indicator.className = "daily-drop-indicator";
+    indicator.setAttribute("aria-hidden", "true");
+
+    // Trouve la carte devant laquelle insérer l'activité
+    function getNextCard(clientY) {
+        return Array.from(
+            list.querySelectorAll("li[data-entry-id]")
+        ).find(function (card) {
+            const bounds = card.getBoundingClientRect();
+            return clientY < bounds.top + bounds.height / 2;
+        });
+    }
+
+    function clearIndicator() {
+        indicator.remove();
+    }
+
+    list.addEventListener("dragover", function (event) {
+        if (!event.dataTransfer.types.includes("application/json")) {
+            return;
+        }
+
+        if (!getSavedTrip()?.days?.some(day => day.id === selectedDayId)) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const nextCard = getNextCard(event.clientY);
+        const listBounds = list.getBoundingClientRect();
+        const cards = list.querySelectorAll("li[data-entry-id]");
+        const lastCard = cards[cards.length - 1];
+
+        // Positionne la ligne avant une carte ou après la dernière
+        let position = 12;
+
+        if (nextCard) {
+            position = nextCard.getBoundingClientRect().top
+                - listBounds.top + list.scrollTop - 6;
+        } else if (lastCard) {
+            position = lastCard.getBoundingClientRect().bottom
+                - listBounds.top + list.scrollTop + 6;
+        }
+
+        indicator.style.top = Math.max(0, position) + "px";
+        list.appendChild(indicator);
+    });
+
+    list.addEventListener("dragleave", function (event) {
+        // Ne masque pas la ligne en passant sur un enfant de la liste
+        if (!list.contains(event.relatedTarget)) {
+            clearIndicator();
+        }
+    });
+
+    // Nettoie aussi après un déplacement annulé avec Échap
+    document.addEventListener("dragend", clearIndicator);
+    document.addEventListener("drop", clearIndicator);
+
+    list.addEventListener("drop", function (event) {
+        event.preventDefault();
+        clearIndicator();
+
+        let source;
+
+        try {
+            source = JSON.parse(
+                event.dataTransfer.getData("application/json")
+            );
+        } catch {
+            return;
+        }
+
+        if (!source || typeof source !== "object") {
+            return;
+        }
+
+        const trip = getSavedTrip();
+        const targetDay = trip?.days?.find(
+            day => day.id === selectedDayId
+        );
+
+        if (!targetDay) {
+            return;
+        }
+
+        let entry;
+        let sourceDay;
+
+        if (source.entryId) {
+            sourceDay = trip.days.find(day => day.id === source.dayId);
+            entry = sourceDay?.items?.find(
+                item => item.id === source.entryId
+            );
+        } else if (source.activityId) {
+            const activity = trip.activities?.find(
+                activity => activity.id === source.activityId
+            );
+
+            if (!activity) {
+                return;
+            }
+
+            // Une nouvelle étape n'a pas encore d'horaire
+            entry = {
+                id: crypto.randomUUID(),
+                activityId: activity.id,
+                startTime: null,
+                durationMinutes: null
+            };
+        }
+
+        if (!entry) {
+            return;
+        }
+
+        if ((targetDay.items || []).some(item =>
+            item.activityId === entry.activityId &&
+            item.id !== entry.id
+        )) {
+            return;
+        }
+
+        // Utilise le même repère que la ligne affichée pendant le déplacement
+        const nextCard = getNextCard(event.clientY);
+        const nextEntryId = nextCard?.dataset.entryId;
+
+        if (nextEntryId === entry.id) {
+            return;
+        }
+
+        // Conserve l'étape complète, y compris son heure et sa durée
+        if (sourceDay) {
+            sourceDay.items = sourceDay.items.filter(
+                item => item.id !== entry.id
+            );
+        }
+
+        if (!Array.isArray(targetDay.items)) {
+            targetDay.items = [];
+        }
+
+        const nextIndex = targetDay.items.findIndex(
+            item => item.id === nextEntryId
+        );
+
+        const insertionIndex = nextIndex >= 0
+            ? nextIndex
+            : targetDay.items.length;
+
+        targetDay.items.splice(insertionIndex, 0, entry);
+
+        saveTrip(trip);
+        renderItinerary();
+    });
+}
+
+// Rouvre l'itinéraire après une suppression et conserve son mode d'affichage
+const itineraryViewToRestore = sessionStorage.getItem("reopen-itinerary");
+
+if (itineraryViewToRestore) {
+    sessionStorage.removeItem("reopen-itinerary");
+
+    document.getElementById("itinerary-view").value =
+        itineraryViewToRestore;
+
+    document.getElementById("itinerary-button").click();

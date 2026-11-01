@@ -1,785 +1,947 @@
+/* Couleurs communes à tout le site */
+:root {
+    --background: #f5f7fb;
+    --surface: #ffffff;
+    --text: #243047;
+    --muted: #64748b;
+    --border: #e2e8f0;
+
+    --primary:  #315fbd;
+    --primary-hover: #274f9f;
+    --primary-soft: #eff6ff;
+
+    --teal: #0f766e;
+    --teal-soft: #ecfdf5;
+
+    --danger: #be123c;
+    --danger-soft: #fff1f2;
+
+    --shadow: 0 4px 20px rgb(30 41 59 / 4%);
+}
+
+/* Dimensions et éléments masqués */
+* {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
 body {
     margin: 0;
-    padding: 24px;
-    font-family: Arial, sans-serif;
-    background-color: #f4f7fa;
-    color: #222;
+    padding: 32px 24px;
+    background: var(--background);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
 }
-/* Limite la largeur du contenu et le centre */
-body > * {
-    max-width: 800px;
+
+body > h1,
+body > h2,
+body > form,
+body > section,
+body > header,
+body > main {
+    max-width: 720px;
     margin-left: auto;
     margin-right: auto;
 }
 
-/* Présente les sections et le formulaire du voyage comme des cartes */
+.trip-page > header,
+.trip-page > main {
+    max-width: 1280px;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+}
+
+h1 {
+    margin-top: 0;
+    font-size: clamp(1.7rem, 4vw, 2.2rem);
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+h3 {
+    font-size: 1.1rem;
+}
+
+p {
+    overflow-wrap: anywhere;
+}
+
+a {
+    color: var(--teal);
+    text-underline-offset: 3px;
+}
+
+small {
+    display: block;
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+/* Cartes et sections */
 section,
 #trip-form {
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-}
-/* Place les étiquettes et les champs sur des lignes séparées */
-label,
-input {
-    display: block;
-}
-/* Donne de l'espace autour des champs */
-input {
-    display: block;
-    width: 100%;
-    max-width: 400px;
-    box-sizing: border-box;
-    margin-top: 6px;
-    margin-bottom: 16px;
-    padding: 10px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font: inherit;
+    padding: 24px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
 }
 
-/* Style commun à tous les boutons */
-button {
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-    cursor: pointer;
-}
-/* Assombrit le bouton quand la souris passe dessus */
-button:hover {
-    background-color: #1d4ed8;
+section > h2:first-child,
+section > h3:first-child {
+    margin-top: 0;
 }
 
-.delete-button {
-    background-color: #dc2626;
-}
-.delete-button:hover {
-    background-color: #b91c1c;
-}
-
-#activity-list {
-    list-style: none;
-    padding: 0;
-}
-/* Aligne le nom et le bouton de chaque activité */
-#activity-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 10px 0;
-    border-bottom: 1px solid #e5e7eb;
+.overview,
+.overview-details {
+    display: grid;
+    gap: 20px;
 }
 
 .overview {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-/* Évite que les cartes débordent de leur colonne */
+
+.overview-details {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    margin-top: 20px;
+}
+
 .overview-card {
     min-width: 0;
     margin-bottom: 0;
 }
-/* Sur un petit écran, affiche une carte par ligne */
-@media (max-width: 700px) {
-    .overview {
-        grid-template-columns: 1fr;
-    }
+
+.overview-card > p {
+    color: var(--muted);
 }
 
-/* Donne plus d'espace à l'itinéraire qu'aux membres */
-.overview-details {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-    margin-top: 20px;
-}
-/* Empile les cartes sur un petit écran */
-@media (max-width: 700px) {
-    .overview-details {
-        grid-template-columns: 1fr;
-    }
-}
-
-.tab-button {
-    background-color: transparent;
-    color: #334155;
-}
-.tab-button:hover {
-    background-color: #e2e8f0;
-}
-/* Met en évidence l'onglet sélectionné */
-.tab-button.active {
-    background-color: #dbeafe;
-    color: #1d4ed8;
-}
-
-/* Espace les onglets et permet leur retour à la ligne sur mobile */
-nav[aria-label="Sections du voyage"] {
+.card-heading {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
+    gap: 12px;
+    margin-bottom: 16px;
 }
-/* Distingue les onglets qui ne sont pas encore disponibles */
-.tab-button:disabled {
-    color: #94a3b8;
-    background-color: transparent;
+
+.card-heading h2,
+.card-heading h3 {
+    margin: 0;
+}
+
+/* Style commun des boutons */
+button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 9px 18px;
+    border: 1px solid #a9bee8;
+    border-radius: 7px;
+    background: #f0f5ff;
+    color: var(--primary);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: none;
+    transition:
+        background-color 150ms,
+        border-color 150ms,
+        box-shadow 150ms;
+}
+
+button:hover:not(:disabled) {
+    background: #e2ebfc;
+    border-color: #a9bee8;
+}
+
+button:disabled {
+    background: #f1f5f9;
+    border-color: var(--border);
+    color: var(--muted);
     cursor: not-allowed;
 }
-/* Donne plus de largeur à la page du voyage */
-.trip-page > header,
-.trip-page > main {
-    max-width: 1200px;
+
+button svg {
+    flex-shrink: 0;
 }
-/* Met en valeur les informations principales du voyage */
-.trip-banner {
-    background: linear-gradient(120deg, #dbeafe, #eff6ff);
-    padding: 32px;
-    border-radius: 16px;
-    margin-bottom: 20px;
+
+/* Contour visible pour la navigation au clavier */
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 3px;
 }
-.trip-banner h2 {
-    margin: 0 0 16px;
-    font-size: 2rem;
+
+/* Actions secondaires bien visibles sur les cartes blanches */
+.secondary-button,
+#back-button,
+#close-lodging-button {
+    background: #edf2f8;
+    border-color: #a8b8cc;
+    color: #334155;
+    font-weight: 500;
 }
-.trip-banner p {
-    margin: 8px 0;
-    color: #475569;
+
+.secondary-button:hover:not(:disabled),
+#back-button:hover,
+#close-lodging-button:hover {
+    background: #dfe8f3;
+    border-color: #8297b2;
+    color: #1e293b;
 }
 
 #back-button {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
-/* Présentation de la fenêtre */
-#lodging-dialog {
-    box-sizing: border-box;
-    width: min(460px, 90vw);
-    max-width: 90vw;
+/* Suppression : rouge discret */
+.delete-button,
+button.danger-button {
+    background: var(--danger-soft);
+    border-color: #ffe4e6;
+    color: var(--danger);
+}
+
+.delete-button:hover:not(:disabled),
+button.danger-button:hover:not(:disabled) {
+    background: #ffe4e6;
+    border-color: #fda4af;
+}
+
+/* Boutons de localisation */
+.location-button {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: var(--teal-soft);
+    border-color: #ccfbf1;
+    color: var(--teal);
+}
+
+.location-button:hover:not(:disabled) {
+    background: #ccfbf1;
+    border-color: #99f6e4;
+}
+
+/* Champs et validation */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+input,
+select {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    margin: 6px 0 16px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: white;
+    color: var(--text);
+    font: inherit;
+}
+
+input::placeholder {
+    color: #94a3b8;
+}
+
+input:focus,
+select:focus {
+    outline: 3px solid #dbeafe;
+    border-color: var(--primary);
+}
+
+input[aria-invalid="true"],
+select[aria-invalid="true"] {
+    border-color: var(--danger);
+    background: var(--danger-soft);
+}
+
+input[aria-invalid="true"]:focus {
+    outline-color: #ffe4e6;
+}
+
+.field-error {
+    margin: -8px 0 16px;
+    color: var(--danger);
+    font-size: 0.8rem;
+}
+
+#trip-form > button[type="submit"] {
+    width: 100%;
+    margin-top: 20px;
+}
+
+#activity-form > button[type="submit"] {
+    margin-top: 14px;
+}
+
+/* Bannière du voyage */
+.trip-banner {
+    padding: 32px;
+    margin-bottom: 24px;
+    border: 1px solid #dce8f7;
+    border-radius: 20px;
+    background: linear-gradient(115deg, #eaf2ff, #edfaf6);
+}
+
+.trip-banner h2 {
+    margin: 0 0 12px;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.trip-banner p {
+    margin: 5px 0;
+    color: #52647a;
+}
+
+/* Navigation entre les onglets */
+nav[aria-label="Sections du voyage"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 24px;
+}
+
+.tab-button {
+    background: transparent;
+    color: var(--muted);
+}
+
+.tab-button:hover:not(:disabled) {
+    background: #e9eef6;
+    color: var(--text);
+}
+
+.tab-button.active {
+    background: #dbeafe;
+    color: var(--primary-hover);
+}
+
+.tab-button:disabled {
+    background: transparent;
+    border-color: transparent;
+    color: #94a3b8;
+}
+
+/* Fenêtres : même présentation pour les trois formulaires */
+dialog {
+    width: min(480px, calc(100vw - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
     padding: 28px;
-    border: none;
-    border-radius: 18px;
-    box-shadow: 0 20px 60px rgb(0 0 0 / 20%);
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 24px 80px rgb(15 23 42 / 20%);
 }
-#lodging-dialog h2 {
-    margin: 0 0 8px;
+
+dialog::backdrop {
+    background: rgb(15 23 42 / 45%);
 }
+
+dialog h2 {
+    margin: 0 0 12px;
+}
+
 .dialog-description {
     margin-bottom: 24px;
-    color: #64748b;
-}
-/* Les champs occupent la largeur de la fenêtre */
-#lodging-dialog input {
-    max-width: none;
-    margin-bottom: 6px;
-}
-#lodging-dialog label {
-    margin-top: 18px;
-}
-/* Met en évidence le champ sélectionné */
-#lodging-dialog input:focus {
-    outline: 3px solid #dbeafe;
-    border-color: #2563eb;
-}
-/* Signale une saisie invalide */
-#lodging-dialog input[aria-invalid="true"] {
-    border-color: #dc2626;
-    background-color: #fff5f5;
-}
-.field-error {
-    margin: 4px 0 12px;
-    color: #b91c1c;
-    font-size: 0.875rem;
+    color: var(--muted);
 }
 
-/* Regroupe les actions en bas de la fenêtre */
 .dialog-actions {
     display: flex;
     justify-content: flex-end;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 28px;
-}
-#close-lodging-button {
-    background-color: #e2e8f0;
-    color: #334155;
-}
-#close-lodging-button:hover {
-    background-color: #cbd5e1;
-}
-#lodging-dialog input[aria-invalid="true"]:focus {
-    outline-color: #fee2e2;
-    border-color: #dc2626;
+    margin-top: 24px;
 }
 
-#trip-form input[aria-invalid="true"] {
-    border-color: #dc2626;
-    background-color: #fff5f5;
-}
-/* Conserve un contour visible lorsque le champ est sélectionné */
-#trip-form input[aria-invalid="true"]:focus {
-    outline: 3px solid #fee2e2;
-}
-
-#activities-map {
-    height: 400px;
-    width: 100%;
-    margin-top: 16px;
-    border-radius: 12px;
-    background-color: #e2e8f0;
+/* Boutons de fenêtre plus fins et moins arrondis */
+.dialog-actions button {
+    min-height: 38px;
+    padding: 9px 18px;
+    border-radius: 7px;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
-.ideas-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
-    gap: 24px;
-    align-items: start;
+/* Bleu plus sobre pour l'action principale */
+.dialog-actions button[type="submit"] {
+    background: #315fbd;
+    border-color: #315fbd;
+    box-shadow: 0 1px 2px rgb(15 23 42 / 8%);
 }
 
-/* Empile les activités et la carte sur un petit écran */
-@media (max-width: 800px) {
-    .ideas-layout {
-        grid-template-columns: 1fr;
-    }
+.dialog-actions button[type="submit"]:hover {
+    background: #274f9f;
+    border-color: #274f9f;
 }
 
-/* Retire les puces et espace les résultats */
-#place-search-results {
-    list-style: none;
-    padding: 0;
-    margin: 12px 0;
-    display: grid;
-    gap: 8px;
-}
-/* Présente chaque résultat comme une ligne sélectionnable */
-#place-search-results button {
-    width: 100%;
-    padding: 12px 14px;
-    text-align: left;
-    font: inherit;
-    line-height: 1.5;
-    color: #334155;
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    overflow-wrap: anywhere;
-}
-/* Met en évidence le résultat survolé ou sélectionné au clavier */
-#place-search-results button:hover,
-#place-search-results button:focus-visible {
-    background-color: #eff6ff;
-    border-color: #2563eb;
-}
-/* Rend le message de recherche moins dominant */
-#place-search-status {
-    color: #64748b;
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-
-/* Sert de point d'ancrage à la liste déroulante */
+/* Recherche et suggestions */
+.destination-search-container,
 .place-search-container {
     position: relative;
 }
-#place-search-form input {
-    max-width: none;
-    width: 100%;
+
+#destination-results,
+#place-search-results,
+#lodging-address-results,
+#edit-location-results,
+#activity-location-results {
+    list-style: none;
+    max-height: 240px;
+    padding: 5px;
+    margin: 8px 0;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 8px 24px rgb(15 23 42 / 8%);
 }
-/* Affiche les résultats par-dessus le contenu, sous le champ */
+
+#destination-results,
 #place-search-results {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     z-index: 1100;
-    max-height: 260px;
-    overflow-y: auto;
-    margin: 0;
-    padding: 6px;
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
-}
-/* Préserve le masquage malgré le display: grid ajouté précédemment */
-#place-search-results[hidden] {
-    display: none;
-}
-
-/* Aligne la liste de suggestions avec le champ Destination */
-.destination-search-container {
-    position: relative;
-    max-width: 400px;
-}
-
-.destination-search-container input {
-    max-width: none;
-    width: 100%;
-}
-
-/* Affiche les suggestions au-dessus du reste du formulaire */
-#destination-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    list-style: none;
-    margin: 0;
-    padding: 6px;
-    max-height: 260px;
-    overflow-y: auto;
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
-}
-#destination-results[hidden] {
-    display: none;
-}
-/* Présente chaque suggestion comme une option cliquable */
-#destination-results button {
-    width: 100%;
-    padding: 10px 12px;
-    text-align: left;
-    font: inherit;
-    color: #334155;
-    background-color: transparent;
-}
-#destination-results button:hover,
-#destination-results button:focus-visible {
-    background-color: #eff6ff;
-}
-#destination-status {
-    color: #64748b;
-    font-size: 0.9rem;
-}
-
-/* Présente les suggestions dans le dialogue sans les couper */
-#lodging-address-results {
-    list-style: none;
-    padding: 4px;
-    margin: 8px 0;
-    max-height: 180px;
-    overflow-y: auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-}
-/* Chaque résultat reste lisible, même avec une longue adresse */
-#lodging-address-results button {
-    width: 100%;
-    padding: 10px;
-    text-align: left;
-    font: inherit;
-    line-height: 1.4;
-    color: #334155;
-    background-color: white;
-    overflow-wrap: anywhere;
-}
-#lodging-address-results button:hover,
-#lodging-address-results button:focus-visible {
-    background-color: #eff6ff;
-}
-#lodging-search-status {
-    color: #64748b;
-    font-size: 0.9rem;
-}
-
-/* Distingue le logement sur la carte */
-.lodging-marker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    border: 2px solid #2563eb;
-    border-radius: 50%;
-    box-sizing: border-box;
-    box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
-    font-size: 21px;
-}
-
-/* Aligne le titre et l'icône */
-.card-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-.card-heading h3 {
     margin: 0;
 }
-/* Petit bouton de localisation */
-.location-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    color: #2563eb;
-    background-color: #eff6ff;
-    border-radius: 10px;
-}
-.location-button:hover {
-    background-color: #dbeafe;
-}
-/* Respecte le masquage si le logement n'a pas de coordonnées */
-.location-button[hidden] {
-    display: none;
-}
-/* Bouton d'édition plus discret */
-.secondary-button {
-    color: #334155;
-    background-color: #f1f5f9;
-    border: 1px solid #e2e8f0;
-}
-.secondary-button:hover {
-    background-color: #e2e8f0;
-}
-/* Améliore la lecture des longues adresses */
-#lodging-display {
-    line-height: 1.6;
-    overflow-wrap: anywhere;
-}
-/* Donne une hauteur à la carte d'aperçu */
-#overview-map {
-    height: 240px;
-    margin-top: 16px;
-    border-radius: 12px;
-    background-color: #e2e8f0;
-}
 
-/* Fenêtre de modification d'une activité */
-#edit-activity-dialog {
-    box-sizing: border-box;
-    width: min(460px, 90vw);
-    max-width: 90vw;
-    padding: 28px;
-    border: none;
-    border-radius: 18px;
-    box-shadow: 0 20px 60px rgb(0 0 0 / 20%);
-}
-#edit-activity-dialog::backdrop {
-    background-color: rgb(0 0 0 / 40%);
-}
-#edit-activity-dialog h2 {
-    margin-top: 0;
-}
-#edit-activity-dialog input {
-    max-width: none;
-}
-/* Signale un nom vide */
-#edit-activity-dialog input[aria-invalid="true"] {
-    border-color: #dc2626;
-    background-color: #fff5f5;
-}
-#edit-activity-dialog input[aria-invalid="true"]:focus {
-    outline: 3px solid #fee2e2;
-}
-
-/* Garde les actions groupées, avec un retour à la ligne si nécessaire */
-.activity-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 8px;
-    flex-shrink: 0;
-}
-/* Empile le texte et les actions sur téléphone */
-@media (max-width: 600px) {
-    #activity-list li {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .activity-actions {
-        justify-content: flex-start;
-    }
-}
-
-/* Suggestions de lieux dans la fenêtre de modification */
-#edit-location-results {
-    list-style: none;
-    margin: 8px 0;
-    padding: 4px;
-    max-height: 180px;
-    overflow-y: auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-}
-#edit-location-results button {
-    width: 100%;
-    padding: 10px;
-    text-align: left;
-    font: inherit;
-    line-height: 1.4;
-    color: #334155;
-    background-color: white;
-    overflow-wrap: anywhere;
-}
-#edit-location-results button:hover,
-#edit-location-results button:focus-visible {
-    background-color: #eff6ff;
-}
-#edit-location-status {
-    color: #64748b;
-    font-size: 0.9rem;
-}
-
-/* Regroupe les boutons des journées */
-.itinerary-days {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
-}
-/* Place les activités disponibles à côté du programme */
-.itinerary-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    gap: 24px;
-}
-/* Empile les deux colonnes sur un petit écran */
-@media (max-width: 800px) {
-    .itinerary-layout {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Navigation compacte au-dessus du programme */
-.day-navigation {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.day-picker {
-    flex: 1;
-    min-width: 0;
-}
-.day-picker span {
+#destination-results button,
+#place-search-results button,
+#lodging-address-results button,
+#edit-location-results button,
+#activity-location-results button {
     display: block;
-    margin-bottom: 6px;
-    color: #64748b;
-    font-size: 0.85rem;
-}
-/* Harmonise les sélecteurs de l'itinéraire */
-#itinerary-panel select {
-    box-sizing: border-box;
-    max-width: 100%;
-    padding: 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    background-color: white;
-    color: #334155;
-    font: inherit;
-}
-#itinerary-day-select {
     width: 100%;
+    padding: 11px 12px;
+    background: transparent;
+    color: var(--text);
+    font-weight: 400;
+    text-align: left;
+    overflow-wrap: anywhere;
 }
 
-/* Permet de parcourir le calendrier dans les deux directions */
-#itinerary-full-view {
-    max-height: 650px;
-    overflow: auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    background-color: white;
+#destination-results button:hover,
+#place-search-results button:hover,
+#lodging-address-results button:hover,
+#edit-location-results button:hover,
+#activity-location-results button:hover {
+    background: var(--teal-soft);
+    color: var(--teal);
 }
-.trip-calendar {
-    display: grid;
-    min-width: 100%;
-}
-/* Garde les dates visibles pendant le défilement vertical */
-.calendar-day-header,
-.calendar-corner {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    padding: 10px;
-    background-color: #f8fafc;
-    border-bottom: 1px solid #cbd5e1;
-    border-right: 1px solid #e2e8f0;
-}
-/* Garde les heures visibles pendant le défilement horizontal */
-.calendar-time {
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    padding: 10px 6px;
-    background-color: #f8fafc;
-    color: #64748b;
+
+#destination-status,
+#place-search-status,
+#lodging-search-status,
+#edit-location-status,
+#activity-location-status {
+    margin: 8px 0;
+    color: var(--muted);
     font-size: 0.8rem;
-    text-align: center;
-    border-bottom: 1px solid #e2e8f0;
-}
-.calendar-corner {
-    left: 0;
-    z-index: 3;
-}
-/* Chaque ligne représente une heure */
-.calendar-slot {
-    min-height: 60px;
-    border-right: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
-}
-.calendar-unscheduled {
-    min-height: 70px;
-    background-color: #eff6ff;
 }
 
-/* Le calendrier utilise toute la largeur disponible */
-.itinerary-layout.calendar-mode {
-    grid-template-columns: minmax(0, 1fr);
+#destination-status:empty,
+#place-search-status:empty,
+#lodging-search-status:empty,
+#edit-location-status:empty,
+#activity-location-status:empty {
+    display: none;
 }
-/* Permet au calendrier de défiler sans élargir toute la page */
+
+/* Activités et carte */
+.ideas-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    align-items: start;
+    gap: 28px;
+}
+
+.ideas-layout > div,
 .itinerary-layout > div {
     min-width: 0;
 }
 
-/* Affiche chaque activité comme une petite carte dans le calendrier */
-.calendar-activity {
-    margin: 6px;
-    padding: 8px 10px;
-    border-left: 3px solid #2563eb;
-    border-radius: 6px;
-    background-color: #dbeafe;
-    color: #1e3a8a;
-    font-size: 0.9rem;
-    line-height: 1.4;
+#activity-list,
+#trip-activities,
+#itinerary-activities {
+    list-style: none;
+    padding: 0;
+}
+
+#activity-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+#activity-list > li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fafcfd;
     overflow-wrap: anywhere;
 }
 
-/* Sépare le nom de l'activité et ses actions */
-#itinerary-day-items > li {
-    padding: 12px 0;
-    border-bottom: 1px solid #e2e8f0;
+.activity-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: auto;
 }
+
+.activity-actions button {
+    font-size: 0.8rem;
+}
+
+#trip-activities > li {
+    padding: 10px 0 10px 14px;
+    margin-bottom: 8px;
+    border-left: 3px solid #99f6e4;
+}
+
+#lodging-display {
+    overflow-wrap: anywhere;
+}
+
+#activities-map,
+#overview-map {
+    width: 100%;
+    margin-top: 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #e2e8f0;
+}
+
+#activities-map {
+    height: 440px;
+}
+
+#overview-map {
+    height: 240px;
+}
+
+.lodging-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--teal);
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 3px 10px rgb(15 23 42 / 20%);
+    font-size: 21px;
+}
+
+/* Itinéraire : activités disponibles à gauche */
+.itinerary-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 28px;
+    margin-top: 24px;
+}
+
+.itinerary-layout.calendar-mode {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+#itinerary-activities {
+    display: grid;
+    gap: 10px;
+}
+
+#itinerary-activities > li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fafbfe;
+}
+
+#itinerary-activities > li > span {
+    min-width: 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+#itinerary-activities button {
+    flex-shrink: 0;
+    min-height: 34px;
+    padding: 7px 10px;
+    background: var(--teal-soft);
+    border-color: #ede9fe;
+    color: var(--teal);
+    font-size: 0.78rem;
+}
+
+#itinerary-activities button:hover:not(:disabled) {
+    background: #ede9fe;
+    border-color: #c4b5fd;
+}
+
+#itinerary-activities button:disabled {
+    background: var(--teal-soft);
+    border-color: #d1fae5;
+    color: var(--teal);
+}
+
+/* Choix de journée et flèches */
+.day-navigation {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid #ede9fe;
+    border-radius: 14px;
+    background: var(--teal-soft);
+}
+
+.day-picker {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+}
+
+.day-picker span {
+    display: block;
+    color: #6d6288;
+    font-size: 0.78rem;
+}
+
+.day-picker select {
+    margin-bottom: 0;
+}
+
+#previous-day,
+#next-day {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    font-size: 1.4rem;
+}
+
+#itinerary-panel > .card-heading > label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    color: var(--muted);
+}
+
+#itinerary-view {
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+}
+
+#itinerary-day-title {
+    margin: 24px 0 16px;
+}
+
+/* Programme quotidien */
+#itinerary-day-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 160px;
+    list-style: none;
+    margin: 0;
+    padding: 4px 0 40px;
+}
+
+#itinerary-day-items > li[data-entry-id] {
+    position: relative;
+    padding: 18px 18px 18px 42px;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--teal);
+    border-radius: 12px;
+    background: white;
+    box-shadow: var(--shadow);
+}
+
+#itinerary-day-items > li[data-entry-id]::before {
+    content: "⠿";
+    position: absolute;
+    top: 18px;
+    left: 12px;
+    color: #a8a1b8;
+    font-size: 24px;
+    line-height: 1;
+}
+
+#itinerary-day-items > li[data-entry-id]:hover {
+    border-color: #c4b5fd;
+    border-left-color: var(--teal);
+}
+
 #itinerary-day-items > li > span {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
 }
 
-/* Harmonise les activités cliquables du calendrier */
-button.calendar-activity {
-    display: block;
-    width: calc(100% - 12px);
-    text-align: left;
-    font-family: inherit;
-    background-color: #dbeafe;
-    color: #1e3a8a;
-}
-button.calendar-activity:hover {
-    background-color: #bfdbfe;
+#itinerary-day-items > li > button {
+    min-height: 34px;
+    padding: 7px 10px;
+    margin: 4px 6px 0 0;
+    font-size: 0.78rem;
 }
 
-/* Grille commune aux dates, activités sans heure et colonnes horaires */
+#itinerary-day-items > li:not([data-entry-id]) {
+    padding: 28px 20px;
+    border: 2px dashed #d8d0eb;
+    border-radius: 12px;
+    background: #fcfaff;
+    color: var(--muted);
+    text-align: center;
+}
+
+/* Curseur des activités déplaçables */
+#itinerary-activities li[draggable="true"],
+#itinerary-day-items li[draggable="true"],
+.precise-event[draggable="true"] {
+    cursor: grab;
+}
+
+#itinerary-activities li[draggable="true"]:active,
+#itinerary-day-items li[draggable="true"]:active,
+.precise-event[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+/* Calendrier complet : conserve l'échelle de 1 pixel par minute */
+#itinerary-full-view {
+    max-height: 650px;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: white;
+}
+
 .precise-calendar {
     display: grid;
     min-width: 100%;
 }
+
 .precise-header,
 .precise-corner {
     position: sticky;
     top: 0;
     z-index: 3;
     padding: 10px;
-    background: #f8fafc;
-    border-bottom: 1px solid #cbd5e1;
+    border-bottom: 1px solid var(--border);
+    background: #faf8ff;
 }
+
+.precise-header button {
+    width: 100%;
+    background: transparent;
+    border-color: transparent;
+    color: #5b438b;
+    font-size: 0.8rem;
+}
+
+.precise-header button:hover {
+    background: #ede9fe;
+}
+
 .precise-corner {
     left: 0;
     z-index: 4;
 }
+
 .precise-unscheduled,
 .precise-unscheduled-label {
     min-height: 70px;
     padding: 6px;
-    background: #eff6ff;
-    border-bottom: 1px solid #cbd5e1;
+    border-bottom: 1px solid var(--border);
+    background: #f5f3ff;
 }
+
 .precise-unscheduled-label,
 .precise-time-column {
     position: sticky;
     left: 0;
     z-index: 2;
-    color: #64748b;
-    font-size: 0.8rem;
+    color: var(--muted);
+    font-size: 0.75rem;
 }
+
 .precise-time-column,
 .precise-day-column {
     height: 1440px;
 }
+
 .precise-time-column {
-    background: #f8fafc;
+    background: #fafbfe;
 }
+
 .precise-hour {
     position: absolute;
-    right: 6px;
+    right: 7px;
 }
+
 .precise-day-column {
     position: relative;
-    border-right: 1px solid #e2e8f0;
+    border-right: 1px solid var(--border);
     background: repeating-linear-gradient(
         to bottom,
-        #e2e8f0 0,
-        #e2e8f0 1px,
+        #e8edf4 0,
+        #e8edf4 1px,
         transparent 1px,
         transparent 60px
     );
 }
+
 .precise-event {
-    box-sizing: border-box;
     display: block;
     width: 100%;
+    min-height: 0;
     padding: 4px 6px;
     margin-bottom: 4px;
-    border-left: 3px solid #2563eb;
-    border-radius: 5px;
-    background: #dbeafe;
-    color: #1e3a8a;
-    text-align: left;
-    font: inherit;
-    font-size: 0.8rem;
     overflow: hidden;
+    border: 1px solid #ddd6fe;
+    border-left: 3px solid var(--teal);
+    border-radius: 6px;
+    background: #ede9fe;
+    color: #0f766e;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: left;
+    overflow-wrap: anywhere;
 }
-.precise-event:hover {
-    background: #bfdbfe;
+
+.precise-event:hover:not(:disabled) {
+    background: #ddd6fe;
 }
+
 .precise-timed-event {
     position: absolute;
     margin: 0;
 }
 
-/* Suggestions du formulaire de création d'activité */
-#activity-location-results {
-    list-style: none;
-    padding: 4px;
-    margin: 8px 0;
-    max-height: 180px;
-    overflow-y: auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
+/* Mise en page sur tablette et téléphone */
+@media (max-width: 900px) {
+    .overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ideas-layout,
+    .itinerary-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
-#activity-location-results button {
-    width: 100%;
-    text-align: left;
-    font: inherit;
-    line-height: 1.4;
-    background-color: white;
-    color: #334155;
-    overflow-wrap: anywhere;
+
+@media (max-width: 600px) {
+    body {
+        padding: 20px 14px;
+    }
+
+    section,
+    #trip-form {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .trip-banner {
+        padding: 24px;
+    }
+
+    .overview,
+    .overview-details {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    nav[aria-label="Sections du voyage"] {
+        gap: 4px;
+    }
+
+    .tab-button {
+        padding: 9px 11px;
+        font-size: 0.8rem;
+    }
+
+    #activity-list > li {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .activity-actions {
+        margin-left: 0;
+    }
+
+    #activities-map {
+        height: 330px;
+    }
+
+    dialog {
+        padding: 22px;
+    }
+
+    .day-navigation {
+        padding: 10px;
+        gap: 6px;
+    }
 }
-#activity-location-results button:hover {
-    background-color: #eff6ff;
+
+/* Sert de repère à la ligne de dépôt */
+#itinerary-day-items {
+    position: relative;
 }
-#activity-location-status {
-    font-size: 0.9rem;
-    color: #64748b;
+
+/* Montre où l'activité sera insérée sans décaler les cartes */
+.daily-drop-indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--teal);
+    box-shadow: 0 0 0 3px rgb(15 118 110 / 10%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Sépare le retrait des actions d'enregistrement */
+#schedule-remove {
+    margin-right: auto;
 }
