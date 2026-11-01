@@ -939,3 +939,4 @@ if (itineraryViewToRestore) {
         itineraryViewToRestore;
 
     document.getElementById("itinerary-button").click();
+}

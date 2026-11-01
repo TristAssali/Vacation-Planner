@@ -13,6 +13,42 @@
 <body class="trip-page">
     <header>
         <h1>Vacation Planner</h1>
+        <!-- Centre de notifications du voyage -->
+        <div class="notifications">
+            <button
+                type="button"
+                id="notifications-button"
+                class="secondary-button"
+                aria-expanded="false"
+                aria-controls="notifications-panel"
+                aria-label="Notifications"
+            >
+                <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                >
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                    <path d="M10 21h4"/>
+                </svg>
+
+                <span id="notifications-count" hidden>0</span>
+            </button>
+
+            <section
+                id="notifications-panel"
+                aria-labelledby="notifications-title"
+                hidden
+            >
+                <h2 id="notifications-title">Notifications</h2>
+                <p id="notifications-empty">Aucun problème détecté.</p>
+                <ul id="notifications-list"></ul>
+            </section>
+        </div>
         <!-- Retourne à la page de création -->
         <button type="button" id="back-button">← Retour</button>
     </header>
@@ -414,6 +450,14 @@
             </button>
         </div>
     </dialog>
+
+    <!-- Annonce les nouveaux avertissements sans déplacer le focus -->
+    <div
+        id="toast-container"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+    ></div>
 
     <!-- Leaflet définit L avant l’initialisation du module de la page. -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

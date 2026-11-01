@@ -5,6 +5,7 @@ import { showActivitiesMap, focusActivityOnMap } from "./trip/map.js";
 import { initializePlaceSearch } from "./trip/place-search.js";
 import { showOverviewMap } from "./trip/overview-map.js";
 import { initializeItinerary, displayItineraryDays } from "./trip/itinerary.js";
+import { initializeNotifications } from "./trip/notifications.js";
 
 initializeItinerary();
 const trip = getSavedTrip();
@@ -107,3 +108,5 @@ itineraryButton.addEventListener("click", function () {
 
     displayItineraryDays();
 });
+
+initializeNotifications();
