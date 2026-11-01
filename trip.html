@@ -27,7 +27,7 @@
         <nav aria-label="Sections du voyage">
             <button type="button" id="overview-button" class="tab-button active">Vue d’ensemble</button>
             <button type="button" id="ideas-button" class="tab-button">Idées et carte</button>
-            <button type="button" class="tab-button" disabled>Itinéraire</button>
+            <button type="button" id="itinerary-button" class="tab-button">Itinéraire</button>
             <button type="button" class="tab-button" disabled>Membres</button>
         </nav>
 
@@ -212,6 +212,77 @@
             
         </section>
 
+        <!-- Contenu de l'onglet Itinéraire -->
+<section id="itinerary-panel" hidden>
+    <div class="card-heading">
+        <h2>Itinéraire</h2>
+
+        <!-- Choisit le niveau de détail affiché -->
+        <label>
+            Affichage
+            <select id="itinerary-view">
+                <option value="day">Par journée</option>
+                <option value="all">Tout le voyage</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="itinerary-layout">
+        <!-- Idées disponibles pour la planification -->
+        <div>
+            <h3>Activités disponibles</h3>
+            <ul id="itinerary-activities"></ul>
+        </div>
+
+        <div>
+            <!-- Programme détaillé d'une journée -->
+            <div id="itinerary-daily-view">
+                <div class="day-navigation">
+                    <button
+                        type="button"
+                        id="previous-day"
+                        class="secondary-button"
+                        aria-label="Journée précédente"
+                    >
+                        ‹
+                    </button>
+
+                    <!-- Permet aussi de choisir directement une journée -->
+                    <label class="day-picker">
+                        <span>Journée</span>
+                        <select id="itinerary-day-select"></select>
+                    </label>
+
+                    <button
+                        type="button"
+                        id="next-day"
+                        class="secondary-button"
+                        aria-label="Journée suivante"
+                    >
+                        ›
+                    </button>
+                </div>
+
+                <h3 id="itinerary-day-title">Sélectionne une journée</h3>
+                <ol id="itinerary-day-items"></ol>
+            </div>
+
+            <!-- Résumé de toutes les journées -->
+            <div id="itinerary-full-view" hidden></div>
+
+            <!-- Disponible lorsque les deux dates ne sont pas définies -->
+            <button
+                type="button"
+                id="add-itinerary-day"
+                class="secondary-button"
+                hidden
+            >
+                Ajouter une journée
+            </button>
+        </div>
+    </div>
+</section>
+
     </main>
 
     <!-- Fenêtre de modification d'une activité -->
@@ -251,6 +322,40 @@
                 <button
                     type="button"
                     id="cancel-edit-activity"
+                    class="secondary-button"
+                >
+                    Annuler
+                </button>
+
+                <button type="submit">Enregistrer</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Fenêtre de modification de l'horaire d'une étape -->
+    <dialog id="schedule-dialog" aria-labelledby="schedule-dialog-title">
+        <h2 id="schedule-dialog-title">Horaire de l’activité</h2>
+
+        <form id="schedule-form" novalidate>
+            <label for="schedule-start">Heure de début (facultative)</label>
+            <input type="time" id="schedule-start">
+
+            <label for="schedule-duration">Durée en minutes (facultative)</label>
+            <input
+                type="number"
+                id="schedule-duration"
+                min="1"
+                step="1"
+                placeholder="Ex. : 90"
+                aria-describedby="schedule-error"
+            >
+
+            <p id="schedule-error" class="field-error" role="alert" hidden></p>
+
+            <div class="dialog-actions">
+                <button
+                    type="button"
+                    id="schedule-cancel"
                     class="secondary-button"
                 >
                     Annuler

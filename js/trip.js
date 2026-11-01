@@ -4,8 +4,9 @@ import { initializeLodging } from "./trip/lodging.js";
 import { showActivitiesMap, focusActivityOnMap } from "./trip/map.js";
 import { initializePlaceSearch } from "./trip/place-search.js";
 import { showOverviewMap } from "./trip/overview-map.js";
+import { initializeItinerary, displayItineraryDays } from "./trip/itinerary.js";
 
-
+initializeItinerary();
 const trip = getSavedTrip();
 
 if (trip) {
@@ -32,8 +33,12 @@ const overviewButton = document.getElementById("overview-button");
 const ideasButton = document.getElementById("ideas-button");
 const overviewPanel = document.getElementById("overview-panel");
 const ideasPanel = document.getElementById("ideas-panel");
+const itineraryButton = document.getElementById("itinerary-button");
+const itineraryPanel = document.getElementById("itinerary-panel");
 
 overviewButton.addEventListener("click", function () {
+    itineraryPanel.hidden = true;
+    itineraryButton.classList.remove("active");
     overviewPanel.hidden = false;
     ideasPanel.hidden = true;
     overviewButton.classList.add("active");
@@ -42,6 +47,8 @@ overviewButton.addEventListener("click", function () {
 });
 
 ideasButton.addEventListener("click", function () {
+    itineraryPanel.hidden = true;
+    itineraryButton.classList.remove("active");
     overviewPanel.hidden = true;
     ideasPanel.hidden = false;
     ideasButton.classList.add("active");
@@ -87,3 +94,16 @@ document.getElementById("open-map-button").addEventListener(
         ideasButton.click();
     }
 );
+
+// Affiche l'itinéraire et cache les deux autres panneaux
+itineraryButton.addEventListener("click", function () {
+    overviewPanel.hidden = true;
+    ideasPanel.hidden = true;
+    itineraryPanel.hidden = false;
+
+    overviewButton.classList.remove("active");
+    ideasButton.classList.remove("active");
+    itineraryButton.classList.add("active");
+
+    displayItineraryDays();
+});

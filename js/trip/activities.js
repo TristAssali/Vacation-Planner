@@ -206,6 +206,7 @@ editNameInput.addEventListener("input", function () {
             document.getElementById("activity-location").value.trim();
 
         trip.activities.push({
+            id: crypto.randomUUID(),
             name: activityName,
             location: activityLocation,
             coordinates: getSelectedLocationCoordinates()
