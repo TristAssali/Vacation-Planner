@@ -3,7 +3,8 @@ import {
     clearSelectedLocationMarker,
     displayActivityMarkers,
     getSelectedLocationCoordinates,
-    focusActivityOnMap
+    focusActivityOnMap,
+    selectLocationOnMap
 } from "./map.js";
 import { findPlaceSuggestions } from "./geocoding.js";
 
@@ -38,6 +39,9 @@ function cancelEditSearch() {
 }
 
 export function initializeActivities(trip) {
+
+    initializeActivityLocationSearch();
+    
     // Recherche les lieux après une pause dans la saisie
     editLocationInput.addEventListener("input", function () {
         cancelEditSearch();
@@ -323,4 +327,110 @@ function displayActivityOverview(trip) {
             typeof activity === "string" ? activity : activity.name;
         overviewList.appendChild(listItem);
     }
+}
+
+// Active les suggestions du formulaire de création d'activité
+function initializeActivityLocationSearch() {
+    const input = document.getElementById("activity-location");
+    const resultsList = document.getElementById("activity-location-results");
+    const status = document.getElementById("activity-location-status");
+
+    let timer = null;
+    let controller = null;
+    let version = 0;
+
+    function cancelSearch() {
+        clearTimeout(timer);
+        controller?.abort();
+        version++;
+
+        resultsList.replaceChildren();
+        resultsList.hidden = true;
+        status.textContent = "";
+    }
+
+    input.addEventListener("input", function () {
+        cancelSearch();
+
+        // Le texte modifié ne doit pas garder les anciennes coordonnées
+        clearSelectedLocationMarker();
+
+        const query = input.value.trim();
+
+        if (query.length < 3) {
+            return;
+        }
+
+        const currentVersion = version;
+
+        timer = setTimeout(async function () {
+            controller = new AbortController();
+            status.textContent = "Recherche en cours…";
+
+            try {
+                const results = await findPlaceSuggestions(
+                    query,
+                    controller.signal
+                );
+
+                if (currentVersion !== version) {
+                    return;
+                }
+
+                for (const place of results) {
+                    const item = document.createElement("li");
+                    const button = document.createElement("button");
+
+                    button.type = "button";
+                    button.textContent = place.formatted;
+
+                    button.addEventListener("click", function () {
+                        cancelSearch();
+
+                        // Sélectionne le point utilisé lors de l'ajout
+                        selectLocationOnMap({
+                            lat: place.lat,
+                            lng: place.lon
+                        });
+
+                        input.value = place.formatted;
+                        status.textContent = "Emplacement sélectionné.";
+                    });
+
+                    item.appendChild(button);
+                    resultsList.appendChild(item);
+                }
+
+                resultsList.hidden = results.length === 0;
+                status.textContent = results.length
+                    ? "Sélectionne un emplacement."
+                    : "Aucun résultat trouvé.";
+            } catch (error) {
+                if (
+                    error.name === "AbortError" ||
+                    currentVersion !== version
+                ) {
+                    return;
+                }
+
+                status.textContent =
+                    "Recherche indisponible. Tu peux sélectionner un point sur la carte.";
+            }
+        }, 400);
+    });
+
+    // Empêche une recherche en attente de réapparaître après un ajout
+    activityForm.addEventListener("reset", cancelSearch);
+
+    // Ferme les suggestions si l'utilisateur choisit directement sur la carte
+    document.getElementById("activities-map").addEventListener(
+        "pointerdown",
+        cancelSearch
+    );
+
+    input.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            cancelSearch();
+        }
+    });
 }

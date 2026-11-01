@@ -756,3 +756,30 @@ button.calendar-activity:hover {
     position: absolute;
     margin: 0;
 }
+
+/* Suggestions du formulaire de création d'activité */
+#activity-location-results {
+    list-style: none;
+    padding: 4px;
+    margin: 8px 0;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+#activity-location-results button {
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    line-height: 1.4;
+    background-color: white;
+    color: #334155;
+    overflow-wrap: anywhere;
+}
+#activity-location-results button:hover {
+    background-color: #eff6ff;
+}
+#activity-location-status {
+    font-size: 0.9rem;
+    color: #64748b;
+}

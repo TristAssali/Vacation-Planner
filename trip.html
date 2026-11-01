@@ -168,7 +168,20 @@
                         <label for="activity-name">Nom de l’activité</label>
                         <input type="text" id="activity-name" required>
                         <label for="activity-location">Emplacement (facultatif)</label>
-                    <input type="text" id="activity-location">
+                        <input
+                            type="text"
+                            id="activity-location"
+                            autocomplete="off"
+                            aria-describedby="activity-location-status"
+                        >
+                        <!-- Suggestions pour l'activité en cours de création -->
+                        <ul id="activity-location-results" hidden></ul>
+                        <p id="activity-location-status" role="status"></p>
+
+                        <small>
+                            Recherche :
+                            <a href="https://www.geoapify.com/">Geoapify</a>
+                        </small>
                         <button type="submit">Ajouter</button>
                     </form>
                     <!-- Les activités seront affichées dans cette liste -->
